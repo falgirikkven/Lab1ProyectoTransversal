@@ -61,12 +61,25 @@ public class Lab1ProyectoTransversal {
             System.out.println("No encontrado");
         }
 
-        // Listar alumnos
+        // Listar Alumnos
         System.out.println("\nListar Alumnos");
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
         for (Alumno alumno : listaAlumnos) {
             System.out.println(alumno.toString());
         }
+
+        // Editar Alumno
+        int cualAlumnoEditar = 2;
+        System.out.println("\nEditar Alumno (Edito el " + cualAlumnoEditar + ")");
+        Alumno alumnoEdit;
+        alumnoEdit = new Alumno(cualAlumnoEditar, 42897241, "Ramiro", "Moran", LocalDate.of(2000, Month.NOVEMBER, 13), true);
+        alumnoData.modificarAlumno(alumnoEdit);
+        
+        // Eliminar Alumno
+        int cualAlumnoEliminar = 2;
+        System.out.println("\nEliminar Alumno (Edito el " + cualAlumnoEliminar + ")");
+        alumnoData.eliminarAlumno(cualAlumnoEliminar);
+
     }
 
 }

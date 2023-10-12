@@ -1,7 +1,5 @@
 package lab1proyectotransversal.accesoADatos;
 
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +59,7 @@ public class AlumnoData {
                 alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
                 alumno.setEstado(rs.getBoolean("estado"));
             } else {
-                System.out.println("Alumno no encontrado");
+                // System.out.println("Alumno no encontrado");
             }
             ps.close();
         } catch (SQLException e) {
@@ -95,7 +93,7 @@ public class AlumnoData {
         return alumnos;
     }
 
-    void modificarAlumno(Alumno alumno) {
+    public void modificarAlumno(Alumno alumno) {
         try {
             String sqlLine = "UPDATE alumno SET dni=?, apellido=?, nombre=?, fechaNacimiento=?, estado=? WHERE idAlumno=?";
             PreparedStatement ps = connection.prepareStatement(sqlLine);
@@ -118,7 +116,26 @@ public class AlumnoData {
         }
     }
 
-    void eliminarAlumno(int idAlumno) {
+    public void eliminarAlumno(int idAlumno) {
+        try {
+            String sqlLine = "UPDATE alumno SET estado=false WHERE idAlumno=?";
+            PreparedStatement ps = connection.prepareStatement(sqlLine);
+            ps.setInt(1, idAlumno);
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
+                System.out.println("Alumno dado de baja");
+            } else {
+                System.out.println("Alumno no dado de baja");
+            }
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /*
+    public void eliminarAlumno(int idAlumno) {
         try {
             String sql = "DELETE FROM alumno WHERE idAlumno=?";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -135,4 +152,5 @@ public class AlumnoData {
             e.printStackTrace();
         }
     }
+    */
 }
