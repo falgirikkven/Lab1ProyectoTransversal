@@ -12,6 +12,41 @@ import lab1proyectotransversal.entidades.Alumno;
  *
  * @author Grupo-3
  */
+//public class Lab1ProyectoTransversal {
+//
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String[] args) {
+//        // Establecer la conexion
+//        Connection con = Conexion.getInstance();
+//        if (con == null) {
+//            // TODO: JOptionPane mensaje de error
+//            return;
+//        }
+//
+//        // Crear alumno data
+//        AlumnoData alumnoData = new AlumnoData(con);
+//
+//        // Crear alumnos
+//        Alumno alumno1 = new Alumno(1, 11000111, "Nahuel", "Lucero", LocalDate.of(1998, Month.AUGUST, 1), true);
+//        Alumno alumno2 = new Alumno(2, 37666666, "Leonel", "Nievas", LocalDate.of(1993, Month.AUGUST, 7), true);
+//        Alumno alumno3 = new Alumno(3, 40000444, "Nahuel", "Ochoa", LocalDate.of(1999, Month.OCTOBER, 18), true);
+//        Alumno alumnos[] = new Alumno[]{alumno1, alumno2, alumno3};
+//
+//        // Guardar alumnos
+//        System.out.println("\nGuardar Alumnos");
+//        for (Alumno alumno : alumnos) {
+//            alumnoData.guardarAlumno(alumno);
+//        }
+//        
+//        
+//    }
+//
+//}
+
+// main de Entrega 1
+
 public class Lab1ProyectoTransversal {
 
     /**
@@ -54,7 +89,7 @@ public class Lab1ProyectoTransversal {
         }
         cualAlumnoBuscar = 666;
         alumnoEncontrado = alumnoData.buscarAlumno(cualAlumnoBuscar);
-        System.out.println("Datos del alumno " + cualAlumnoBuscar + ":"); // Deberia funcionar
+        System.out.println("Datos del alumno " + cualAlumnoBuscar + ":"); // No deberia funcionar
         if (alumnoEncontrado != null) {
             System.out.println(alumnoEncontrado.toString());
         } else {

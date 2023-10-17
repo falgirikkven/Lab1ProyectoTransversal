@@ -30,11 +30,11 @@ public class MateriaData {
         return null;
     }
 
-    void modificarMateria(Materia materia) {
+    public void modificarMateria(Materia materia) {
         // TODO: implementar este metodo
     }
 
-    void eliminarMateria(int idMateria) {
+    public void eliminarMateria(int idMateria) {
         // TODO: implementar este metodo
     }
 
