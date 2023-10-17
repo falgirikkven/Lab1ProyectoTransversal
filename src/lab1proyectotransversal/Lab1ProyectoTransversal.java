@@ -6,7 +6,9 @@ import java.time.Month;
 import java.util.List;
 import lab1proyectotransversal.accesoADatos.AlumnoData;
 import lab1proyectotransversal.accesoADatos.Conexion;
+import lab1proyectotransversal.accesoADatos.MateriaData;
 import lab1proyectotransversal.entidades.Alumno;
+import lab1proyectotransversal.entidades.Materia;
 
 /**
  *
@@ -79,7 +81,52 @@ public class Lab1ProyectoTransversal {
         int cualAlumnoEliminar = 2;
         System.out.println("\nEliminar Alumno (Edito el " + cualAlumnoEliminar + ")");
         alumnoData.eliminarAlumno(cualAlumnoEliminar);
-
+        
+        //Crear materia data
+        MateriaData materiadata=new MateriaData(con);
+        
+        //Crear materias
+        System.out.println("\nGuardar materia");
+        Materia materia1 = new Materia(1, "Matematica", 2013, true);
+        Materia materia2= new Materia(2, "Literatura", 2015, true);
+        Materia materia3= new Materia(3, "Fisica", 2020, true);
+        Materia materias[] = new Materia[]{materia1,materia2,materia3};
+        
+        //Guardar materias
+        System.out.println("\nGuardar Materia");
+        for (Materia materia : materias) {
+            materiadata.guardarMateria(materia);
+        }
+        
+        //Buscar materia
+        System.out.println("\nBuscar materias");
+        int buscarmateria;
+        Materia materiaEnco;
+        buscarmateria=1;
+        materiaEnco=materiadata.buscarMateria(buscarmateria);
+        if(materiaEnco!=null){
+            System.out.println("Materia encontrada");
+        }else{
+            System.out.println("Materia no encontrada");
+        }
+        
+        //Listar materias
+        System.out.println("\nListar materias");
+        List<Materia> listaMateria = materiadata.listarMaterias();
+        for(Materia materia: listaMateria){
+            System.out.println(materia.toString());
+        }
+        
+        //Modificar materia
+        int idmateriaMod=2;
+        System.out.println("\nModificar materia");
+        Materia modifMateria;
+        modifMateria=new Materia(idmateriaMod,"Matematicas",2003,true);
+        materiadata.modificarMateria(modifMateria);
+        
+        //Eliminar materia(logico)
+        int materiaElim=1;
+        System.out.println("\nEliminar materia");
+        materiadata.eliminarMateria(materiaElim);
     }
-
 }
