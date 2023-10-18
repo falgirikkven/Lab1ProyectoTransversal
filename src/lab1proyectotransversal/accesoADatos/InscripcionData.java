@@ -15,8 +15,8 @@ public class InscripcionData {
     private MateriaData matData;
     private AlumnoData aluData;
 
-    public InscripcionData(Connection connection, MateriaData matData, AlumnoData aluData) {
-        this.connection = connection;
+    public InscripcionData(AlumnoData aluData, MateriaData matData) {
+        this.connection = Conexion.getInstance();
         this.matData = matData;
         this.aluData = aluData;
     }
@@ -153,7 +153,7 @@ public class InscripcionData {
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 System.out.println("\nNota actualizada.");
-            }else{
+            } else {
                 System.out.println("\nNota NO actualizada.");
             }
         } catch (SQLException sqle) {
@@ -161,21 +161,21 @@ public class InscripcionData {
             sqle.printStackTrace();
         }
     }
-    
-    public List<Alumno> obtenerAlumnoXMateria(int idMateria){
+
+    public List<Alumno> obtenerAlumnoXMateria(int idMateria) {
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
-            String sql= "SELECT idAlumno FROM inscripcion WHERE idMateria=?";
+            String sql = "SELECT idAlumno FROM inscripcion WHERE idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {                
-                listaAlumnos.add(aluData.buscarAlumno(rs.getInt("idAlumno")));                
+            while (rs.next()) {
+                listaAlumnos.add(aluData.buscarAlumno(rs.getInt("idAlumno")));
             }
         } catch (SQLException sqle) {
             System.out.println("[Error " + sqle.getErrorCode() + "] " + sqle.getMessage());
             sqle.printStackTrace();
         }
         return listaAlumnos;
-    }       
+    }
 }
