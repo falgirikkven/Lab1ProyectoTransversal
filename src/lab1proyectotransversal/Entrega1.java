@@ -24,7 +24,7 @@ public class Entrega1 {
         }
 
         // Crear alumno data
-        AlumnoData alumnoData = new AlumnoData(con);
+        AlumnoData alumnoData = new AlumnoData();
 
         // Crear alumnos
         Alumno alumno1 = new Alumno(1, 11000111, "Nahuel", "Lucero", LocalDate.of(1998, Month.AUGUST, 1), true);
