@@ -109,7 +109,7 @@ public class Entrega2 {
                 "\nBuscar materias");
         int buscarmateria;
         Materia materiaEnco;
-        buscarmateria = 1;
+        buscarmateria = 3;
         materiaEnco = materiadata.buscarMateria(buscarmateria);
         System.out.println("Materia con codigo " + buscarmateria + ":");
         if (materiaEnco
@@ -129,7 +129,7 @@ public class Entrega2 {
         }
 
         //Modificar materia
-        int idmateriaMod = 2;
+        int idmateriaMod = 1;
 
         System.out.println(
                 "\nModificar materia");
@@ -139,7 +139,7 @@ public class Entrega2 {
         materiadata.modificarMateria(modifMateria);
 
         //Eliminar materia(logico)
-        int materiaElim = 1;
+        int materiaElim = 2;
 
         System.out.println(
                 "\nEliminar materia");

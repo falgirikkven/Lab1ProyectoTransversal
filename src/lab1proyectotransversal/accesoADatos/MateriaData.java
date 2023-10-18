@@ -114,11 +114,13 @@ public class MateriaData {
         // TODO: corregir bug
         try {
             String sql = "UPDATE materia SET nombre=?, año=?, estado=? WHERE idMateria=?";
+            
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, materia.getIdMateria());
-            ps.setString(2, materia.getNombre());
-            ps.setInt(3, materia.getAnio());
-            ps.setBoolean(4, materia.isEstado());
+            ps.setString(1, materia.getNombre());
+            ps.setInt(2, materia.getAnio());
+            ps.setBoolean(3, materia.isEstado());
+            ps.setInt(4, materia.getIdMateria());
+            
             int fil = ps.executeUpdate();
             if (fil > 0) {
                 System.out.println("Materia modificada");
