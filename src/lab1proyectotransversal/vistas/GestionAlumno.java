@@ -209,7 +209,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         }
 
         // Buscar Alumno
-        Alumno alumno = alumnoData.buscarAlumno("dni", dni);
+        Alumno alumno = alumnoData.buscarAlumnoPorDni(dni);
         if (alumno == null) {
             // No encontrado: limpiar campos (excepto documento)
             apellidoTextField.setText("");
@@ -242,7 +242,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         }
 
         // Buscar alumno
-        Alumno alumno = alumnoData.buscarAlumno("dni", dni);
+        Alumno alumno = alumnoData.buscarAlumnoPorDni(dni);
         if (alumno == null) {
             // No encontrado, salir
             JOptionPane.showMessageDialog(this, "No hay alumno alumnos con este documento", "Error", JOptionPane.ERROR_MESSAGE);
@@ -289,7 +289,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         LocalDate fechaNacimiento = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // Buscar este alumno
-        Alumno alumno = alumnoData.buscarAlumno("dni", dni);
+        Alumno alumno = alumnoData.buscarAlumnoPorDni(dni);
         // Guardar resultado posterior del SQL
         Boolean result = false;
 
