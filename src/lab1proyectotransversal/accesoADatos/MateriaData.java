@@ -41,7 +41,7 @@ public class MateriaData {
             // Ejecutar querry
             int filas = ps.executeUpdate();
             if (filas > 0) {
-                System.out.println("Alumno agregado");
+                System.out.println("Materia agregada");
             }
 
             // Cerrar el preparedStatement
@@ -60,17 +60,16 @@ public class MateriaData {
 
         return result;
     }
-    
-    
+
     //Buscar Materia
     public Materia buscarMateria(int idMateria) {
         Materia materia = null;
-        try{
-            String sql="SELECT * FROM materia WHERE idmateria=?";
-            PreparedStatement ps=connection.prepareStatement(sql);
+        try {
+            String sql = "SELECT * FROM materia WHERE idmateria=?";
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
-            ResultSet rs=ps.executeQuery();
-            if(rs.next()){
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
                 materia = new Materia();
                 materia.setIdMateria(rs.getInt("idmateria"));
                 materia.setNombre(rs.getString("nombre"));
@@ -78,7 +77,7 @@ public class MateriaData {
                 materia.setEstado(rs.getBoolean("estado"));
             }
             ps.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
             e.printStackTrace();
         }
@@ -88,12 +87,12 @@ public class MateriaData {
     //Listar materia
     public List<Materia> listarMaterias() {
         List<Materia> listamateria = new ArrayList();
-        try{
-            String sql="SELECT * FROM materia";
-            PreparedStatement ps=connection.prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
-            while(rs.next()){
-                Materia materia=new Materia();
+        try {
+            String sql = "SELECT * FROM materia";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Materia materia = new Materia();
                 materia.setIdMateria(rs.getInt("idmateria"));
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
@@ -101,51 +100,64 @@ public class MateriaData {
                 listamateria.add(materia);
             }
             ps.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
             e.printStackTrace();
         }
         return listamateria;
-    }    
-    
+    }
+
     //Modificar materia
-    public void modificarMateria(Materia materia) {
-        try{
-            String sql="UPDATE materia SET nombre=?, año=?, estado=? WHERE idMateria=?";
+    public boolean modificarMateria(Materia materia) {
+        boolean result = true;
+
+        // TODO: corregir bug
+        try {
+            String sql = "UPDATE materia SET nombre=?, año=?, estado=? WHERE idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, materia.getIdMateria());
             ps.setString(2, materia.getNombre());
             ps.setInt(3, materia.getAnio());
             ps.setBoolean(4, materia.isEstado());
-            int fil=ps.executeUpdate();
-            if(fil>0){
-                System.out.println("materia modificada");
-            }else{
-                System.out.println("materia no modificada");
+            int fil = ps.executeUpdate();
+            if (fil > 0) {
+                System.out.println("Materia modificada");
+            } else {
+                result = false;
+                System.out.println("Materia no modificada");
             }
             ps.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
+            result = false;
             System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
             e.printStackTrace();
         }
+
+        return result;
     }
-    
+
     //Eliminar materia
-    public void eliminarMateria(int idMateria) {
-        try{
-           String sql="Update materia SET estado=false WHERE idMateria=?";
-           PreparedStatement ps = connection.prepareStatement(sql);
-           ps.setInt(1, idMateria);
-           int fil=ps.executeUpdate();
-           if(fil>0){
-               System.out.println("Materia eliminada");
-           }else{
-               System.out.println("Materia no eliminada");
-           }
-        }catch(SQLException e){
+    public boolean eliminarMateria(int idMateria) {
+        boolean result = true;
+
+        try {
+            String sql = "Update materia SET estado=false WHERE idMateria=?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, idMateria);
+            int fil = ps.executeUpdate();
+            if (fil > 0) {
+                System.out.println("Materia eliminada");
+            } else {
+                System.out.println("Materia no eliminada");
+                result = false;
+            }
+        } catch (SQLException e) {
+            result = false;
             System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
             e.printStackTrace();
         }
+
+        return result;
     }
 
 }

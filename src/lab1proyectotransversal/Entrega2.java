@@ -1,9 +1,11 @@
 package lab1proyectotransversal;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import lab1proyectotransversal.accesoADatos.AlumnoData;
+import lab1proyectotransversal.accesoADatos.Conexion;
 import lab1proyectotransversal.accesoADatos.MateriaData;
 import lab1proyectotransversal.entidades.Alumno;
 import lab1proyectotransversal.entidades.Materia;
@@ -15,8 +17,16 @@ import lab1proyectotransversal.entidades.Materia;
 public class Entrega2 {
 
     public static void main(String[] args) {
-        // TODO: hacer revision
-        
+
+        // Establecer la conexion
+        Connection con = Conexion.getInstance();
+        if (con == null) {
+            // TODO: JOptionPane mensaje de error
+            return;
+        }
+
+        // Pruebas con AlumnoData
+        //
         // Crear alumno data
         AlumnoData alumnoData = new AlumnoData();
 
@@ -27,43 +37,34 @@ public class Entrega2 {
         Alumno alumnos[] = new Alumno[]{alumno1, alumno2, alumno3};
 
         // Guardar alumnos
-        System.out.println(
-                "\nGuardar Alumnos");
+        System.out.println("\nGuardar Alumnos");
         for (Alumno alumno : alumnos) {
             alumnoData.guardarAlumno(alumno);
         }
 
         // Buscar Alumno
-        System.out.println(
-                "\nBuscar Alumnos");
+        System.out.println("\nBuscar Alumnos");
         int cualAlumnoBuscar;
         Alumno alumnoEncontrado;
         cualAlumnoBuscar = 2;
         alumnoEncontrado = alumnoData.buscarAlumno(cualAlumnoBuscar);
-
-        System.out.println(
-                "Datos del alumno " + cualAlumnoBuscar + ":"); // Deberia funcionar
-        if (alumnoEncontrado
-                != null) {
+        System.out.println("Datos del alumno " + cualAlumnoBuscar + ":"); // Deberia funcionar
+        if (alumnoEncontrado != null) {
             System.out.println(alumnoEncontrado.toString());
         } else {
             System.out.println("No encontrado");
         }
         cualAlumnoBuscar = 666;
         alumnoEncontrado = alumnoData.buscarAlumno(cualAlumnoBuscar);
-
-        System.out.println(
-                "Datos del alumno " + cualAlumnoBuscar + ":"); // Deberia funcionar
-        if (alumnoEncontrado
-                != null) {
+        System.out.println("Datos del alumno " + cualAlumnoBuscar + ":"); // No deberia funcionar
+        if (alumnoEncontrado != null) {
             System.out.println(alumnoEncontrado.toString());
         } else {
             System.out.println("No encontrado");
         }
 
         // Listar Alumnos
-        System.out.println(
-                "\nListar Alumnos");
+        System.out.println("\nListar Alumnos");
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
         for (Alumno alumno : listaAlumnos) {
             System.out.println(alumno.toString());
@@ -71,21 +72,20 @@ public class Entrega2 {
 
         // Editar Alumno
         int cualAlumnoEditar = 2;
-
-        System.out.println(
-                "\nEditar Alumno (Edito el " + cualAlumnoEditar + ")");
+        System.out.println("\nEditar Alumno (Edito el " + cualAlumnoEditar + ")");
         Alumno alumnoEdit;
         alumnoEdit = new Alumno(cualAlumnoEditar, 42897241, "Ramiro", "Moran", LocalDate.of(2000, Month.NOVEMBER, 13), true);
-
         alumnoData.modificarAlumno(alumnoEdit);
 
         // Eliminar Alumno
         int cualAlumnoEliminar = 2;
-
-        System.out.println(
-                "\nEliminar Alumno (Edito el " + cualAlumnoEliminar + ")");
+        System.out.println("\nEliminar Alumno (Edito el " + cualAlumnoEliminar + ")");
         alumnoData.eliminarAlumno(cualAlumnoEliminar);
+        //
+        // Fin Pruebas con AlumnoData
 
+        // Pruebas Materia Data
+        //
         //Crear materia data
         MateriaData materiadata = new MateriaData();
 
@@ -111,9 +111,10 @@ public class Entrega2 {
         Materia materiaEnco;
         buscarmateria = 1;
         materiaEnco = materiadata.buscarMateria(buscarmateria);
+        System.out.println("Materia con codigo " + buscarmateria + ":");
         if (materiaEnco
                 != null) {
-            System.out.println("Materia encontrada");
+            System.out.println(materiaEnco.toString());
         } else {
             System.out.println("Materia no encontrada");
         }
@@ -143,5 +144,7 @@ public class Entrega2 {
         System.out.println(
                 "\nEliminar materia");
         materiadata.eliminarMateria(materiaElim);
+        //
+        // Fin Pruebas Materia Data
     }
 }
