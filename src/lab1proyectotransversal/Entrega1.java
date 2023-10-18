@@ -15,7 +15,7 @@ import lab1proyectotransversal.entidades.Alumno;
 public class Entrega1 {
 
     public static void main(String args[]) {
-
+        
         // Establecer la conexion
         Connection con = Conexion.getInstance();
         if (con == null) {
