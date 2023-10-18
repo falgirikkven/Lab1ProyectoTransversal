@@ -13,8 +13,8 @@ public class AlumnoData {
 
     private Connection connection;
 
-    public AlumnoData(Connection connection) {
-        this.connection = connection;
+    public AlumnoData() {
+        this.connection = Conexion.getInstance();
     }
 
     public boolean guardarAlumno(Alumno alumno) {
@@ -76,7 +76,7 @@ public class AlumnoData {
 
             // Ejecutar querry
             ResultSet rs = ps.executeQuery();
-            
+
             // Crear nuevo objeto alumno con los datos obtenidos
             if (rs.next()) {
                 alumno = new Alumno();
@@ -99,7 +99,7 @@ public class AlumnoData {
         return alumno;
     }
 
-    public Alumno buscarAlumno(String atributo, int valor) {
+    public Alumno buscarAlumnoPorDni(int dni) {
         /*
          * El proposito de esta funcion es poder buscarAlumnos con dni, como
          * idAlumno y dni son enteros la funcion no se puede sobrecargar.
@@ -108,15 +108,15 @@ public class AlumnoData {
 
         try {
             // Preparar la estructura de la consulta
-            String sql = "SELECT * FROM alumno WHERE " + atributo + "=?";
+            String sql = "SELECT * FROM alumno WHERE dni=?";
 
             // Prepared Statement
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, valor);
+            ps.setInt(1, dni);
 
             // Ejecutar querry
             ResultSet rs = ps.executeQuery();
-            
+
             // Crear nuevo objeto alumno con los datos obtenidos
             if (rs.next()) {
                 alumno = new Alumno();
@@ -151,7 +151,7 @@ public class AlumnoData {
 
             // Ejecutar querry
             ResultSet rs = ps.executeQuery();
-            
+
             // Guardar Alumnos en la lista
             while (rs.next()) {
                 Alumno alumno = new Alumno();
@@ -193,7 +193,7 @@ public class AlumnoData {
 
             // Ejecutar querry
             int filas = ps.executeUpdate();
-            
+
             if (filas > 0) { // Exito
                 System.out.println("Alumno modificado");
             } else { // Fracaso
@@ -227,7 +227,7 @@ public class AlumnoData {
 
             // Ejecutar querry
             int filas = ps.executeUpdate();
-            
+
             if (filas > 0) { // Exito
                 System.out.println("Alumno dado de baja");
             } else { // Fracaso

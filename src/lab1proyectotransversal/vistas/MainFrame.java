@@ -33,10 +33,10 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
 
-        Connection con = Conexion.getInstance();
-        this.alumnoData = new AlumnoData(con);
-        this.materiaData = new MateriaData(con);
-        this.inscripcionData = new InscripcionData(con);
+        Connection connection =  Conexion.getInstance();
+        this.alumnoData = new AlumnoData();
+        this.materiaData = new MateriaData();
+        this.inscripcionData = new InscripcionData(connection);
 
         // Alumnos
         gestionAlumno = new GestionAlumno(alumnoData);
