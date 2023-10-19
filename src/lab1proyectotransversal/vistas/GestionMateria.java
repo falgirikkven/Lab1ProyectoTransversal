@@ -9,7 +9,7 @@ import lab1proyectotransversal.entidades.Materia;
  * @author Grupo-3
  */
 public class GestionMateria extends javax.swing.JInternalFrame {
-
+    
     MateriaData materiaData;
 
     /**
@@ -20,7 +20,7 @@ public class GestionMateria extends javax.swing.JInternalFrame {
         this.materiaData = materiaData;
     }
     
-    private void limpiarCampos(){
+    private void limpiarCampos() {
         codigoTextField.setText("");
         nombreTextField.setText("");
         anioTextField.setText("");
@@ -182,49 +182,48 @@ public class GestionMateria extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         int idMateria = 0;
         
-        try{
+        try {
             idMateria = Integer.parseInt(codigoTextField.getText());
             
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El codigo debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         //buscar materia
-        Materia materia=materiaData.buscarMateria(idMateria);
-        if(materia == null){
+        Materia materia = materiaData.buscarMateria(idMateria);
+        if (materia == null) {
             nombreTextField.setText("");
             anioTextField.setText("");
             JOptionPane.showMessageDialog(this, "No se ha encontrado la materia", "Información", JOptionPane.INFORMATION_MESSAGE);
-        }else{
+        } else {
             nombreTextField.setText(materia.getNombre());
-            anioTextField.setText(materia.getAnio()+"");
+            anioTextField.setText(materia.getAnio() + "");
             estadoRadioButton.setSelected(materia.isEstado());
         }
     }//GEN-LAST:event_buscarButtonActionPerformed
 
     private void nuevoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoButtonActionPerformed
-        // TODO add your handling code here:
         limpiarCampos();
     }//GEN-LAST:event_nuevoButtonActionPerformed
 
     private void eliminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarButtonActionPerformed
-        // TODO add your handling code here:
         int idMateria;
-        try{
-            idMateria=Integer.parseInt(codigoTextField.getText());
-        }catch(NumberFormatException e){
+        try {
+            idMateria = Integer.parseInt(codigoTextField.getText());
+        } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "La materia debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Materia materia=materiaData.buscarMateria(idMateria);
+        Materia materia = materiaData.buscarMateria(idMateria);
         if (materia != null) {
-            if(materiaData.eliminarMateria(materia.getIdMateria())){
-                materia=null;
+            if (materiaData.eliminarMateria(materia.getIdMateria())) {
+                materia = null;
                 limpiarCampos();
                 JOptionPane.showMessageDialog(this, "materia eliminada", "Información", JOptionPane.INFORMATION_MESSAGE);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "No se pudo eliminar la materia", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "No hay materia con este ID", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -232,38 +231,47 @@ public class GestionMateria extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_eliminarButtonActionPerformed
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
-        // TODO add your handling code here:
         
-        int codigo=Integer.parseInt(codigoTextField.getText());
-        String nombre=nombreTextField.getText();
-        int anio=Integer.parseInt(anioTextField.getText());
-        boolean estado=estadoRadioButton.isSelected();
+        String codigo = codigoTextField.getText();
+        String nombre = nombreTextField.getText();
+        String aniolog = anioTextField.getText();
+        boolean estado = estadoRadioButton.isSelected();
         System.out.println(estado);
         
+        if (codigo.isBlank() || nombre.isBlank() || aniolog.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos deben ser rellenados", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         
+        
+        
+        
+
         //validar el id materia
         int idMateria;
-        try{
-            idMateria=Integer.parseInt(codigoTextField.getText());
-        }catch(NumberFormatException e){
+        int anio;
+        try {
+            idMateria = Integer.parseInt(codigoTextField.getText());
+            anio = Integer.parseInt(anioTextField.getText());
+        } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "La materia debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         //buscar materia
-        Materia materia=materiaData.buscarMateria(idMateria);
-        
+        Materia materia = materiaData.buscarMateria(idMateria);
+
         //guardar sql
-        boolean result=false;
+        boolean result = false;
         
-        if(materia==null){
-            materia=new Materia(codigo, nombre, anio, estado);
-            result=materiaData.guardarMateria(materia);
-        }else {
+        if (materia == null) {
+            materia = new Materia(idMateria, nombre, anio, estado);
+            result = materiaData.guardarMateria(materia);
+        } else {
             materia.setIdMateria(idMateria);
             materia.setNombre(nombre);
             materia.setAnio(anio);
             materia.setEstado(estado);
-            result=materiaData.modificarMateria(materia);
+            result = materiaData.modificarMateria(materia);
         }
         //mostrar sql
         if (result) {
@@ -274,12 +282,10 @@ public class GestionMateria extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_guardarButtonActionPerformed
 
     private void salirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirButtonActionPerformed
-        // TODO add your handling code here:
         this.hide();
     }//GEN-LAST:event_salirButtonActionPerformed
 
     private void estadoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estadoRadioButtonActionPerformed
-        // TODO add your handling code here:
         estadoRadioButton.setSelected(isIcon);
     }//GEN-LAST:event_estadoRadioButtonActionPerformed
 
