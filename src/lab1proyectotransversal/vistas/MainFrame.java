@@ -55,7 +55,7 @@ public class MainFrame extends javax.swing.JFrame {
         jDesktopPane1.add(manipulacionNotas);
 
         // Consulta Alumnos por materia
-        consultaAlumnosPorMateria = new ConsultaAlumnosPorMateria(alumnoData, materiaData);
+        consultaAlumnosPorMateria = new ConsultaAlumnosPorMateria(materiaData, inscripcionData);
         jDesktopPane1.add(consultaAlumnosPorMateria);
 
     }

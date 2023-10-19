@@ -1,7 +1,11 @@
 package lab1proyectotransversal.vistas;
 
-import lab1proyectotransversal.accesoADatos.AlumnoData;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import lab1proyectotransversal.accesoADatos.InscripcionData;
 import lab1proyectotransversal.accesoADatos.MateriaData;
+import lab1proyectotransversal.entidades.Alumno;
+import lab1proyectotransversal.entidades.Materia;
 
 /**
  *
@@ -9,16 +13,40 @@ import lab1proyectotransversal.accesoADatos.MateriaData;
  */
 public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
 
-    AlumnoData alumnoData;
-    MateriaData materiaData;
+    private final DefaultTableModel dtm;
+    private final MateriaData materiaData;
+    private final InscripcionData inscripcionData;
+    private List<Materia> listaMaterias = null;
 
     /**
      * Creates new form ConsultaAlumnosMateria
      */
-    public ConsultaAlumnosPorMateria(AlumnoData alumnoData, MateriaData materiaData) {
+    public ConsultaAlumnosPorMateria(MateriaData materiaData, InscripcionData inscripcionData) {
         initComponents();
-        this.alumnoData = alumnoData;
+        this.dtm = (DefaultTableModel) alumnosTable.getModel();
         this.materiaData = materiaData;
+        this.inscripcionData = inscripcionData;
+    }
+
+    private void actualizarElementosComboBox() {
+        materiaSeleccionCB.removeAllItems();
+        listaMaterias = materiaData.listarMaterias();
+        for (Materia materia : listaMaterias) {
+            materiaSeleccionCB.addItem(materia.getNombre());
+        }
+        materiaSeleccionCB.setSelectedIndex(-1);
+    }
+
+    private void actualizarAlumnosTable() {
+        // Este metodo esta sujeto al tipo de lista (OJO)
+        Materia materiaSeleccionada = listaMaterias.get(materiaSeleccionCB.getSelectedIndex());
+        List<Alumno> listaAlumnos = inscripcionData.obtenerAlumnoXMateria(materiaSeleccionada.getIdMateria());
+
+        dtm.setRowCount(0);
+        for (Alumno alumno : listaAlumnos) {
+            dtm.addRow(new Object[]{alumno.getIdAlumno(), alumno.getDni(), alumno.getApellido(), alumno.getNombre()});
+        }
+        System.out.println("actualizo tabla");
     }
 
     /**
@@ -34,12 +62,17 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
         materiaSeleccionLabel = new javax.swing.JLabel();
         materiaSeleccionCB = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        alumnosTable = new javax.swing.JTable();
         salirButton = new javax.swing.JButton();
 
         setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle("Alumnos por Materia");
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         titulo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -47,7 +80,14 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
 
         materiaSeleccionLabel.setText("Materia Seleccionada:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        materiaSeleccionCB.setSelectedIndex(-1);
+        materiaSeleccionCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                materiaSeleccionCBActionPerformed(evt);
+            }
+        });
+
+        alumnosTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -63,7 +103,7 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(alumnosTable);
 
         salirButton.setText("Salir");
 
@@ -107,10 +147,23 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        materiaSeleccionCB.setSelectedIndex(-1);
+        dtm.setRowCount(0);
+    }//GEN-LAST:event_formComponentShown
+
+    private void materiaSeleccionCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_materiaSeleccionCBActionPerformed
+        if (materiaSeleccionCB.getSelectedIndex() == -1) {
+            actualizarElementosComboBox();
+        } else {
+            actualizarAlumnosTable();
+        }
+    }//GEN-LAST:event_materiaSeleccionCBActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable alumnosTable;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JComboBox<String> materiaSeleccionCB;
     private javax.swing.JLabel materiaSeleccionLabel;
     private javax.swing.JButton salirButton;
