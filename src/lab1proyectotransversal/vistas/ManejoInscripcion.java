@@ -1,7 +1,9 @@
 package lab1proyectotransversal.vistas;
 
+import java.util.List;
 import lab1proyectotransversal.accesoADatos.AlumnoData;
 import lab1proyectotransversal.accesoADatos.InscripcionData;
+import lab1proyectotransversal.entidades.*;
 
 /**
  *
@@ -19,6 +21,7 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
         initComponents();
         this.alumnoData = alumnoData;
         this.inscripcionData = inscripcionData;
+        armarComboBox();
     }
 
     /**
@@ -165,4 +168,12 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     private javax.swing.JButton salirButton;
     private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
+    
+    private void armarComboBox(){
+        List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
+        for (Alumno alumno : listaAlumnos) {
+            alumnoSeleccionCB.addItem(alumno.toString());
+        }
+    }
+
 }
