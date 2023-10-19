@@ -15,26 +15,43 @@ public class InscripcionData {
     private MateriaData matData;
     private AlumnoData aluData;
 
-    public InscripcionData(AlumnoData aluData, MateriaData matData) {
+    public InscripcionData(MateriaData matData, AlumnoData aluData) {
         this.connection = Conexion.getInstance();
         this.matData = matData;
         this.aluData = aluData;
     }
 
-    public void guardarInscripcion(Inscripcion inscripcion) {
+    public boolean guardarInscripcion(Inscripcion inscripcion) {
+        boolean result = true;
         try {
-            String sql = "INSERT INTO inscripcion(idInscripto, nota, idAlumno, idMateria) VALUES (?,?,?,?)";
+            // Preparando la sentencia SQL
+            String sql;
+            if (inscripcion.getIdInscripto() == -1) {   // El idInscripto no es ingresado por usuario
+                sql = "INSERT INTO inscripcion(nota, idAlumno, idMateria) VALUES (?,?,?)";
+            } else {
+                sql = "INSERT INTO inscripcion(nota, idAlumno, idMateria, idInscripto) VALUES (?,?,?,?)";
+            }
+
+            // PreparedStatement
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, inscripcion.getIdInscripto());
-            ps.setInt(2, inscripcion.getNota());
-            ps.setInt(3, inscripcion.getAlumno().getIdAlumno());
-            ps.setInt(4, inscripcion.getMateria().getIdMateria());
+            ps.setInt(1, inscripcion.getNota());
+            ps.setInt(2, inscripcion.getAlumno().getIdAlumno());
+            ps.setInt(3, inscripcion.getMateria().getIdMateria());
+            if (inscripcion.getIdInscripto() != -1) {
+                ps.setInt(4, inscripcion.getIdInscripto());
+            }
+
+            // Corroborando si se llevó a cabo exitosamente la operación
             int filas = ps.executeUpdate();
             if (filas > 0) {
-                System.out.println("\nInscripción agregada");
+                System.out.println("Inscripción agregada");
             }
+
+            // Cerrando ps
             ps.close();
+
         } catch (SQLException sqle) {
+            result = false;     // No se pudo llevar a cabo exitosamente la operación
             int errorCode = sqle.getErrorCode();
             if (errorCode != 1062) { // Ignorar inscripciones repetidas
                 System.out.println("[Error " + errorCode + "] " + sqle.getMessage());
@@ -43,6 +60,7 @@ public class InscripcionData {
                 System.out.println("[Inscripcion repetida] " + sqle.getMessage());
             }
         }
+        return result;
     }
 
     public List<Inscripcion> obtenerInscripciones() {
@@ -53,10 +71,10 @@ public class InscripcionData {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Inscripcion inscripcion = new Inscripcion();
-                inscripcion.setIdInscripto(rs.getInt("idInscripcion"));
+                inscripcion.setIdInscripto(rs.getInt("idInscripto"));
                 inscripcion.setNota(rs.getInt("nota"));
                 inscripcion.setAlumno(aluData.buscarAlumno(rs.getInt("idAlumno")));
-                inscripcion.setMateria(matData.buscarMateria(rs.getInt("materia")));
+                inscripcion.setMateria(matData.buscarMateria(rs.getInt("idMateria")));
                 listaIncripciones.add(inscripcion);
             }
             ps.close();
@@ -76,7 +94,7 @@ public class InscripcionData {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Inscripcion inscripcion = new Inscripcion();
-                inscripcion.setIdInscripto(rs.getInt("idInscripcion"));
+                inscripcion.setIdInscripto(rs.getInt("idInscripto"));
                 inscripcion.setNota(rs.getInt("nota"));
                 inscripcion.setAlumno(aluData.buscarAlumno(rs.getInt("idAlumno")));
                 inscripcion.setMateria(matData.buscarMateria(rs.getInt("idMateria")));
@@ -109,14 +127,13 @@ public class InscripcionData {
 
     public List<Materia> obtenerMateriasNOCursadas(int idAlumno) {
         List<Materia> listaMaterias = new ArrayList<>();
-        listaMaterias = matData.listarMaterias();
         try {
-            String sql = "SELECT idMateria FROM inscripcion WHERE idAlumno=?";
+            String sql = "SELECT idMateria FROM materia WHERE idMateria NOT IN (SELECT idMateria FROM inscripcion WHERE idAlumno=?);";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idAlumno);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                listaMaterias.remove(matData.buscarMateria(rs.getInt("idMateria")));
+            while (rs.next()) {                                    
+                listaMaterias.add(matData.buscarMateria(rs.getInt("idMateria")));
             }
         } catch (SQLException sqle) {
             System.out.println("[Error " + sqle.getErrorCode() + "] " + sqle.getMessage());
@@ -125,7 +142,8 @@ public class InscripcionData {
         return listaMaterias;
     }
 
-    public void borrarInscripcionMateriaAlumno(int idAlumno, int idMateria) {
+    public boolean borrarInscripcionMateriaAlumno(int idAlumno, int idMateria) {
+        boolean result = true;
         try {
             String sql = "DELETE FROM inscripcion WHERE idAlumno=? AND idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -133,49 +151,54 @@ public class InscripcionData {
             ps.setInt(2, idMateria);
             int filas = ps.executeUpdate();
             if (filas > 0) {
-                System.out.println("\nInscripción borrada.");
+                System.out.println("Inscripción borrada.");
             } else {
-                System.out.println("\nInscripción NO borrada.");
+                System.out.println("Inscripción NO borrada.");
             }
         } catch (SQLException sqle) {
+            result = false;
             System.out.println("[Error " + sqle.getErrorCode() + "] " + sqle.getMessage());
             sqle.printStackTrace();
         }
+        return result;
     }
 
-    public void actualizarNota(int idAlumno, int idMateria, int nota) {
+    public boolean actualizarNota(int idAlumno, int idMateria, int nota) {
+        boolean result = true;
         try {
-            String sql = "UPDATE inscripcion SET nota=? WHERE idAlumno=? AND idMateria=?";
+            String sql = "UPDATE inscripcion SET nota=? WHERE idAlumno=? AND idMateria=? ";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, nota);
             ps.setInt(2, idAlumno);
             ps.setInt(3, idMateria);
             int filas = ps.executeUpdate();
             if (filas > 0) {
-                System.out.println("\nNota actualizada.");
-            } else {
-                System.out.println("\nNota NO actualizada.");
+                System.out.println("Nota actualizada.");
+            }else{
+                System.out.println("Nota NO actualizada.");
             }
         } catch (SQLException sqle) {
+            result = false;
             System.out.println("[Error " + sqle.getErrorCode() + "] " + sqle.getMessage());
             sqle.printStackTrace();
         }
+        return result;
     }
-
-    public List<Alumno> obtenerAlumnoXMateria(int idMateria) {
+    
+    public List<Alumno> obtenerAlumnoXMateria(int idMateria){
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
-            String sql = "SELECT idAlumno FROM inscripcion WHERE idMateria=?";
+            String sql= "SELECT idAlumno FROM inscripcion WHERE idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                listaAlumnos.add(aluData.buscarAlumno(rs.getInt("idAlumno")));
+            while (rs.next()) {                
+                listaAlumnos.add(aluData.buscarAlumno(rs.getInt("idAlumno")));                
             }
         } catch (SQLException sqle) {
             System.out.println("[Error " + sqle.getErrorCode() + "] " + sqle.getMessage());
             sqle.printStackTrace();
         }
         return listaAlumnos;
-    }
+    }       
 }
