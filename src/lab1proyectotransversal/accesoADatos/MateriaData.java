@@ -65,13 +65,13 @@ public class MateriaData {
     public Materia buscarMateria(int idMateria) {
         Materia materia = null;
         try {
-            String sql = "SELECT * FROM materia WHERE idmateria=?";
+            String sql = "SELECT * FROM materia WHERE idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 materia = new Materia();
-                materia.setIdMateria(rs.getInt("idmateria"));
+                materia.setIdMateria(rs.getInt("idMateria"));
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(rs.getBoolean("estado"));
@@ -86,25 +86,25 @@ public class MateriaData {
 
     //Listar materia
     public List<Materia> listarMaterias() {
-        List<Materia> listamateria = new ArrayList();
+        List<Materia> listaMaterias = new ArrayList();
         try {
             String sql = "SELECT * FROM materia";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Materia materia = new Materia();
-                materia.setIdMateria(rs.getInt("idmateria"));
+                materia.setIdMateria(rs.getInt("idMateria"));
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(rs.getBoolean("estado"));
-                listamateria.add(materia);
+                listaMaterias.add(materia);
             }
             ps.close();
         } catch (SQLException e) {
             System.out.println("[Error " + e.getErrorCode() + "] " + e.getMessage());
             e.printStackTrace();
         }
-        return listamateria;
+        return listaMaterias;
     }
 
     //Modificar materia
