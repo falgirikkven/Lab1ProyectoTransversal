@@ -216,6 +216,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             nombreTextField.setText("");
             fechaNacimientoCalendar.setCalendar(null);
             JOptionPane.showMessageDialog(this, "No se ha encontrado al alumno", "Información", JOptionPane.INFORMATION_MESSAGE);
+            estadoRadioButton.setSelected(false);
 
         } else {
             // Encontrado: actualizar campos
@@ -223,6 +224,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             nombreTextField.setText(alumno.getNombre());
             Calendar calendar = localDateToCalendar(alumno.getFechaNacimiento());
             fechaNacimientoCalendar.setCalendar(calendar);
+            estadoRadioButton.setSelected(alumno.isEstado());
 
         }
     }//GEN-LAST:event_buscarButtonActionPerformed
