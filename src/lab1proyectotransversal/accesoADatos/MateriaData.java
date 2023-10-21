@@ -87,12 +87,13 @@ public class MateriaData {
     //Listar materia
     public List<Materia> listarMaterias() {
         List<Materia> listaMaterias = new ArrayList();
+        Materia materia;
         try {
             String sql = "SELECT * FROM materia";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Materia materia = new Materia();
+                materia = new Materia();
                 materia.setIdMateria(rs.getInt("idMateria"));
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
@@ -109,9 +110,7 @@ public class MateriaData {
 
     //Modificar materia
     public boolean modificarMateria(Materia materia) {
-        boolean result = true;
-
-        // TODO: corregir bug
+        boolean result = true;        
         try {
             String sql = "UPDATE materia SET nombre=?, año=?, estado=? WHERE idMateria=?";
 

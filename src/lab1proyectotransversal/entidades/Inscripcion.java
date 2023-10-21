@@ -66,7 +66,17 @@ public class Inscripcion {
 
     @Override
     public String toString() {
-        return "Inscripcion{" + "idInscripto=" + idInscripto + ", alumno=" + alumno.getIdAlumno() + ", materia=" + materia.getIdMateria() + ", nota=" + nota + '}';
+        return "Inscripcion{" + "idInscripto=" + idInscripto + ", idAlumno=" + alumno.getIdAlumno() 
+                + ", dniAlumno=" + alumno.getDni() + ", apellidoAlumno=" + alumno.getApellido() 
+                + ", idMateria=" + materia.getIdMateria() + ", nombreMateria=" + materia.getNombre() 
+                +  ", nota=" + nota + '}';
+    }
+    
+    public String mostrarInscripcion() {        // Este método existe para no desentonar respecto de los métodos equivalentes en otras clases en 'Entrega2', si bien se podría haber omitido su existencia y solo usar toString
+        return "Inscripcion{" + "idInscripto=" + idInscripto + ", idAlumno=" + alumno.getIdAlumno() 
+                + ", dniAlumno=" + alumno.getDni() + ", apellidoAlumno=" + alumno.getApellido() 
+                + ", idMateria=" + materia.getIdMateria() + ", nombreMateria=" + materia.getNombre() 
+                +  ", nota=" + nota + '}';
     }
 
 }

@@ -44,7 +44,7 @@ public class AlumnoData {
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 System.out.println("Alumno agregado");
-            }
+            }    
 
             // Cerrar el preparedStatement
             ps.close();

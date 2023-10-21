@@ -33,7 +33,7 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
 
-        Connection connection = Conexion.getInstance();
+        Connection connection = Conexion.getInstance();     // PARA QUÉ SE USA?
         this.alumnoData = new AlumnoData();
         this.materiaData = new MateriaData();
         this.inscripcionData = new InscripcionData(materiaData, alumnoData);
@@ -47,7 +47,7 @@ public class MainFrame extends javax.swing.JFrame {
         jDesktopPane1.add(gestionMateria);
 
         // Inscripciones
-        manejoInscripcion = new ManejoInscripcion(alumnoData, inscripcionData);
+        manejoInscripcion = new ManejoInscripcion(alumnoData, inscripcionData, materiaData);
         jDesktopPane1.add(manejoInscripcion);
 
         // Notas
@@ -112,7 +112,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 457, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         alumnoMenu.setText("Alumno");
@@ -185,10 +185,11 @@ public class MainFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void alumnoFormularioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alumnoFormularioActionPerformed
