@@ -47,7 +47,7 @@ public class MainFrame extends javax.swing.JFrame {
         jDesktopPane1.add(gestionMateria);
 
         // Inscripciones
-        manejoInscripcion = new ManejoInscripcion(alumnoData, inscripcionData, materiaData);
+        manejoInscripcion = new ManejoInscripcion(alumnoData, inscripcionData);
         jDesktopPane1.add(manejoInscripcion);
 
         // Notas

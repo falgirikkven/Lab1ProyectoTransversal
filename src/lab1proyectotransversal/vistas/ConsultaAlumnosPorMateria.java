@@ -80,7 +80,6 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
 
         materiaSeleccionLabel.setText("Materia Seleccionada:");
 
-        materiaSeleccionCB.setSelectedIndex(-1);
         materiaSeleccionCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 materiaSeleccionCBActionPerformed(evt);

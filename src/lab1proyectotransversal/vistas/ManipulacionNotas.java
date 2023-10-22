@@ -1,7 +1,12 @@
 package lab1proyectotransversal.vistas;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import lab1proyectotransversal.accesoADatos.AlumnoData;
 import lab1proyectotransversal.accesoADatos.InscripcionData;
+import lab1proyectotransversal.entidades.Alumno;
+import lab1proyectotransversal.entidades.Inscripcion;
 
 /**
  *
@@ -9,8 +14,14 @@ import lab1proyectotransversal.accesoADatos.InscripcionData;
  */
 public class ManipulacionNotas extends javax.swing.JInternalFrame {
 
-    AlumnoData alumnoData;
-    InscripcionData inscripcionData;
+    private final AlumnoData alumnoData;
+    private final InscripcionData inscripcionData;
+    private DefaultTableModel modelo = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int fil, int col) {
+            return false;
+        }
+    };
 
     /**
      * Creates new form ManipulacionNotas
@@ -19,6 +30,39 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         initComponents();
         this.alumnoData = alumnoData;
         this.inscripcionData = inscripcionData;
+        configurarComboBox();
+        armarCabeceraTabla();
+
+    }
+
+    private void configurarComboBox() {     // agregando items a jcbAlumSeleccion        
+        List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
+        for (Alumno alum : listaAlumnos) {
+            jcbAlumSeleccion.addItem(alum);
+        }
+    }
+
+    private void armarCabeceraTabla() {
+        modelo.addColumn("Código");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Nota");
+        jtMateriasCursadas.setModel(modelo);
+    }
+
+    private void borrarFilasTabla() {
+        int indFil = jtMateriasCursadas.getRowCount() - 1;
+        for (; indFil >= 0; indFil--) {
+            modelo.removeRow(indFil);
+        }
+    }
+
+    private void configContTablaMatCurs() {
+        borrarFilasTabla();
+        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+        List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripcionesPorAlumno(alumno.getIdAlumno());
+        for (Inscripcion insc : listaInscripciones) {
+            modelo.addRow(new Object[]{insc.getMateria().getIdMateria(), insc.getMateria().getNombre(), insc.getNota()});
+        }
     }
 
     /**
@@ -30,45 +74,68 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        alumnoSeleccionLabel = new javax.swing.JLabel();
-        alumnoSeleccionCB = new javax.swing.JComboBox<>();
+        jlCargarNotas = new javax.swing.JLabel();
+        jlAlumSelec = new javax.swing.JLabel();
+        jcbAlumSeleccion = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        guardarButton = new javax.swing.JButton();
-        salirButton = new javax.swing.JButton();
+        jtMateriasCursadas = new javax.swing.JTable();
+        jbCargarNota = new javax.swing.JButton();
+        jbSalir = new javax.swing.JButton();
 
         setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle("Carga de notas");
+        setPreferredSize(new java.awt.Dimension(517, 444));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Cargar notas");
+        jlCargarNotas.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jlCargarNotas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlCargarNotas.setText("Cargar notas");
 
-        alumnoSeleccionLabel.setText("Alumno seleccionado:");
+        jlAlumSelec.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jlAlumSelec.setText("Alumno seleccionado:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jcbAlumSeleccion.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jcbAlumSeleccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcbAlumSeleccionActionPerformed(evt);
+            }
+        });
+
+        jtMateriasCursadas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Materia ID", "Nombre", "Año"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
-            };
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+            }
+        ));
+        jScrollPane1.setViewportView(jtMateriasCursadas);
+
+        jbCargarNota.setText("Cargar nota");
+        jbCargarNota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbCargarNotaActionPerformed(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
 
-        guardarButton.setText("Guardar");
-
-        salirButton.setText("Salir");
+        jbSalir.setText("Salir");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,55 +145,126 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jlCargarNotas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addComponent(alumnoSeleccionLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(alumnoSeleccionCB, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(30, 30, 30)
+                        .addComponent(jlAlumSelec)
+                        .addGap(18, 18, 18)
+                        .addComponent(jcbAlumSeleccion, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(guardarButton)
-                .addGap(112, 112, 112)
-                .addComponent(salirButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 24, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbCargarNota)
+                        .addGap(149, 149, 149)
+                        .addComponent(jbSalir)))
                 .addGap(30, 30, 30))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jlCargarNotas)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(alumnoSeleccionLabel)
-                    .addComponent(alumnoSeleccionCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                    .addComponent(jlAlumSelec)
+                    .addComponent(jcbAlumSeleccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(guardarButton)
-                    .addComponent(salirButton))
+                    .addComponent(jbCargarNota)
+                    .addComponent(jbSalir))
                 .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jcbAlumSeleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAlumSeleccionActionPerformed
+        configContTablaMatCurs();
+    }//GEN-LAST:event_jcbAlumSeleccionActionPerformed
+
+    private void jbCargarNotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCargarNotaActionPerformed
+        
+        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+        // si no hay materias en jtMateriasCursadas, advertir al usuario 
+        if (jtMateriasCursadas.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, """
+                                                No hay inscripciones que correspondan al alumno con
+                                                DNI: """ + alumno.getDni(), "Información", 1);
+            return;
+        }
+
+        switch (jtMateriasCursadas.getSelectedRowCount()) {
+            case 0:
+                JOptionPane.showMessageDialog(this, """
+                                                    Para cargar la nota del alumno en una materia primero debe 
+                                                    seleccionar una en la lista, haciendo click en la misma.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case 1:
+                int filaSelec = jtMateriasCursadas.getSelectedRow();
+
+                // obteniendo datos de inscripción
+                int idMat = (int) jtMateriasCursadas.getValueAt(filaSelec, 0);
+                String nombreMat = (String) jtMateriasCursadas.getValueAt(filaSelec, 1);
+                int idAlum = alumno.getIdAlumno();
+                try {
+                    int nota = Integer.parseInt(JOptionPane.showInputDialog("""
+                                                                        Ingrese la nota que desea asignar (debe ser un entero mayor 
+                                                                        o igual que 1 y menor o igual que 10)."""));
+
+                    // Si la nota es válida, se envia un mensaje por fuera de la consola (cosa que no hace actualizarNota())
+                    if (nota < 1 || nota > 10) {
+                        JOptionPane.showMessageDialog(this, """
+                                                            Debe ingresar un número entero que se sea mayor o igual
+                                                            que 1 y menor o igual que 10.""", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    // Ejecutando la actualización de nota e imprimiendo resultado
+                    if (inscripcionData.actualizarNota(idAlum, idMat , nota)) {
+                        modelo.setValueAt(nota, filaSelec, 2);
+
+                        JOptionPane.showMessageDialog(this, """
+                                                        Se ha cargado la nota del alumno con 
+                                                        DNI: """ + alumno.getDni() + " en " + nombreMat, "Información", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, """
+                                                        ERROR: No se ha podido cargar la nota del alumno 
+                                                        con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(this, "Debe ingresar un número válido.", "Error", JOptionPane.ERROR_MESSAGE);                    
+                }
+                break;
+
+            default:
+                JOptionPane.showMessageDialog(this, """
+                                                    Debe seleccionar sólo una materia de la lista, haciendo click
+                                                    en la misma.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jbCargarNotaActionPerformed
+
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+        // Actualizar la tabla de materias/notas que corresponde al alumno que quedó seleccionado en jcbAlumSeleccion luego de salir de ManipulacionNotas
+        configContTablaMatCurs();
+    }//GEN-LAST:event_formInternalFrameActivated
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> alumnoSeleccionCB;
-    private javax.swing.JLabel alumnoSeleccionLabel;
-    private javax.swing.JButton guardarButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JButton salirButton;
+    private javax.swing.JButton jbCargarNota;
+    private javax.swing.JButton jbSalir;
+    private javax.swing.JComboBox<Alumno> jcbAlumSeleccion;
+    private javax.swing.JLabel jlAlumSelec;
+    private javax.swing.JLabel jlCargarNotas;
+    private javax.swing.JTable jtMateriasCursadas;
     // End of variables declaration//GEN-END:variables
 }
