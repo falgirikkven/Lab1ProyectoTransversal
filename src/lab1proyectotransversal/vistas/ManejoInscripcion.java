@@ -1,6 +1,5 @@
 package lab1proyectotransversal.vistas;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -35,7 +34,8 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
     private void configurarComboBox() {     
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
-        for (Alumno alum : listaAlumnos) {
+        jcbAlumSeleccion.removeAllItems();
+        for (Alumno alum : listaAlumnos) {            
             jcbAlumSeleccion.addItem(alum);
         }
     }
@@ -97,6 +97,23 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
         setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(517, 444));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameActivated(evt);
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jlTitulo.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jlTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -350,6 +367,10 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     private void jbSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalirActionPerformed
         this.hide();
     }//GEN-LAST:event_jbSalirActionPerformed
+
+    private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+        configurarComboBox();
+    }//GEN-LAST:event_formInternalFrameActivated
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

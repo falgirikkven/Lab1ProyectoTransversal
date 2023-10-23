@@ -30,16 +30,17 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         initComponents();
         this.alumnoData = alumnoData;
         this.inscripcionData = inscripcionData;
-        configurarComboBox();
         armarCabeceraTabla();
-
     }
 
-    private void configurarComboBox() {     // agregando items a jcbAlumSeleccion        
+    // Agregando items a jcbAlumSeleccion
+    private void configurarComboBox() {
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
+        jcbAlumSeleccion.removeAllItems();
         for (Alumno alum : listaAlumnos) {
             jcbAlumSeleccion.addItem(alum);
         }
+        jcbAlumSeleccion.setSelectedIndex(-1);
     }
 
     private void armarCabeceraTabla() {
@@ -49,19 +50,15 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         jtMateriasCursadas.setModel(modelo);
     }
 
-    private void borrarFilasTabla() {
-        int indFil = jtMateriasCursadas.getRowCount() - 1;
-        for (; indFil >= 0; indFil--) {
-            modelo.removeRow(indFil);
-        }
-    }
-
     private void configContTablaMatCurs() {
-        borrarFilasTabla();
-        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripcionesPorAlumno(alumno.getIdAlumno());
-        for (Inscripcion insc : listaInscripciones) {
-            modelo.addRow(new Object[]{insc.getMateria().getIdMateria(), insc.getMateria().getNombre(), insc.getNota()});
+        if (jcbAlumSeleccion.getSelectedIndex() == -1) {
+            modelo.setRowCount(0);
+        } else {
+            Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+            List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripcionesPorAlumno(alumno.getIdAlumno());
+            for (Inscripcion insc : listaInscripciones) {
+                modelo.addRow(new Object[]{insc.getMateria().getIdMateria(), insc.getMateria().getNombre(), insc.getNota()});
+            }
         }
     }
 
@@ -191,7 +188,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jcbAlumSeleccionActionPerformed
 
     private void jbCargarNotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCargarNotaActionPerformed
-        
+
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
         // si no hay materias en jtMateriasCursadas, advertir al usuario 
         if (jtMateriasCursadas.getRowCount() == 0) {
@@ -227,9 +224,9 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
                                                             que 1 y menor o igual que 10.""", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     // Ejecutando la actualización de nota e imprimiendo resultado
-                    if (inscripcionData.actualizarNota(idAlum, idMat , nota)) {
+                    if (inscripcionData.actualizarNota(idAlum, idMat, nota)) {
                         modelo.setValueAt(nota, filaSelec, 2);
 
                         JOptionPane.showMessageDialog(this, """
@@ -241,7 +238,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
                                                         con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException nfe) {
-                    JOptionPane.showMessageDialog(this, "Debe ingresar un número válido.", "Error", JOptionPane.ERROR_MESSAGE);                    
+                    JOptionPane.showMessageDialog(this, "Debe ingresar un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
 
@@ -253,8 +250,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbCargarNotaActionPerformed
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
-        // Actualizar la tabla de materias/notas que corresponde al alumno que quedó seleccionado en jcbAlumSeleccion luego de salir de ManipulacionNotas
-        configContTablaMatCurs();
+        configurarComboBox();
     }//GEN-LAST:event_formInternalFrameActivated
 
 
