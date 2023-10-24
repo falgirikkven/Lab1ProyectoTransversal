@@ -34,7 +34,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
         AlumnoData alumnoData = new AlumnoData();
 
         // Crear alumnos
-        Alumno alumno1 = new Alumno(-1, 11000111, "Nahuel", "Lucero", LocalDate.of(1998, Month.AUGUST, 1), true);
+        Alumno alumno1 = new Alumno(1, 11000111, "Nahuel", "Lucero", LocalDate.of(1998, Month.AUGUST, 1), true);
         Alumno alumno2 = new Alumno(2, 37666666, "Leonel", "Nievas", LocalDate.of(1993, Month.AUGUST, 7), true);
         Alumno alumno3 = new Alumno(3, 40000444, "Nahuel", "Ochoa", LocalDate.of(1999, Month.OCTOBER, 18), true);
         Alumno alumnos[] = new Alumno[]{alumno1, alumno2, alumno3};
@@ -75,7 +75,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
 
         // Editar Alumno
         int cualAlumnoEditar = 2;
-        System.out.println("\n-----Editar Alumno (Edito el " + cualAlumnoEditar + ")-----");
+        System.out.println("\n-----Modificar Alumno (alumno con id " + cualAlumnoEditar + ")-----");
         Alumno alumnoEdit;
         alumnoEdit = new Alumno(cualAlumnoEditar, 42897241, "Ramiro", "Moran", LocalDate.of(2000, Month.NOVEMBER, 13), true);
         alumnoData.modificarAlumno(alumnoEdit);
@@ -89,7 +89,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
 
         // Eliminar Alumno
         int cualAlumnoEliminar = 2;
-        System.out.println("\n-----Eliminar Alumno (Edito el " + cualAlumnoEliminar + ")-----");
+        System.out.println("\n-----Eliminar Alumno (alumno con id " + cualAlumnoEliminar + ")-----");
         alumnoData.eliminarAlumno(cualAlumnoEliminar);
         //
 
@@ -148,7 +148,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
         // Modificar materia
         int idmateriaMod = 1;
 
-        System.out.println("\n-----Modificar materia-----");
+        System.out.println("\n-----Modificar materia (materia con id " + idmateriaMod+")-----");        
         Materia modifMateria;
         modifMateria = new Materia(idmateriaMod, "Matematicas", 2003, true);
 
@@ -165,7 +165,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
         // Eliminar materia(logico)
         int materiaElim = 2;
 
-        System.out.println("\n-----Eliminar materia-----");
+        System.out.println("\n-----Eliminar materia (materia con id "+ materiaElim +")-----");        
         materiaData.eliminarMateria(materiaElim);
         //
 
@@ -215,14 +215,14 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
         }
 
         // Mostrar todas las materias a las que alguna vez se inscribió un alumno en particular
-        System.out.println("\n-----Mostrar todas las materias a las que alguna vez se inscribió el alumno con id=1-----");
+        System.out.println("\n-----Mostrar todas las materias (activas) que corresponden a las inscripciones del alumno con id=1-----");
         List<Materia> listaMatCurPorAlumno = inscripcionData.obtenerMateriasCursadas(1);
         for (Materia materia : listaMatCurPorAlumno) {
             System.out.println(materia.mostrarMateria());
         }
 
         // Mostrar todas la materias en las que nunca se inscribió un alumno en particular
-        System.out.println("\n-----Mostrar todas la materias en las que nunca se inscribió el alumno con id=1-----");
+        System.out.println("\n-----Mostrar todas las materias (activas) que NO corresponden a las inscripciones del alumno con id=1-----");
         List<Materia> listaMatNoCurPorAlumno = inscripcionData.obtenerMateriasNOCursadas(1);
         for (Materia materia : listaMatNoCurPorAlumno) {
             System.out.println(materia.mostrarMateria());
@@ -251,7 +251,7 @@ public class Entrega2 {     // FALTA MODIFICAR ESTO PARA QUE SE ADAPTE A LOS NUE
         }
 
         // Mostrar alumnos que se han inscripto alguna vez en una materia en particular
-        System.out.println("\n-----Mostrar todos los alumnos que se han inscripto en la materia con id=2-----");
+        System.out.println("\n-----Mostrar todos los alumnos (activos) que se han inscripto en la materia con id=2-----");
         List<Alumno> listaAlumEnMat = inscripcionData.obtenerAlumnoXMateria(2);
         for (Alumno alumno : listaAlumEnMat) {
             System.out.println(alumno.mostrarAlumno());

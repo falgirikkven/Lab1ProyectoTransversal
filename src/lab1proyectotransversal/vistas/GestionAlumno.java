@@ -30,6 +30,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         documentoTextField.setText("");
         apellidoTextField.setText("");
         nombreTextField.setText("");
+        estadoRadioButton.setSelected(false);
         fechaNacimientoCalendar.setCalendar(null);
     }
 
@@ -215,8 +216,8 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             apellidoTextField.setText("");
             nombreTextField.setText("");
             fechaNacimientoCalendar.setCalendar(null);
-            
-            JOptionPane.showMessageDialog(this, "No se ha encontrado al alumno.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            estadoRadioButton.setSelected(false);
+            JOptionPane.showMessageDialog(this, "No se ha encontrado al alumno.", "Información", JOptionPane.INFORMATION_MESSAGE);            
 
         } else {
             // Encontrado: actualizar campos
@@ -224,6 +225,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             nombreTextField.setText(alumno.getNombre());
             Calendar calendar = localDateToCalendar(alumno.getFechaNacimiento());
             fechaNacimientoCalendar.setCalendar(calendar);
+            estadoRadioButton.setSelected(alumno.isEstado());
 
         }
     }//GEN-LAST:event_buscarButtonActionPerformed
@@ -238,7 +240,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         try {
             dni = Integer.parseInt(documentoTextField.getText());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El documento debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El documento debe ser un número entero sin decimales.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -246,8 +248,14 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         Alumno alumno = alumnoData.buscarAlumnoPorDni(dni);
         if (alumno == null) {
             // No encontrado, salir
-            JOptionPane.showMessageDialog(this, "No hay alumno alumnos con este documento", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No hay alumno con este documento.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
+        }else{
+            // Encontrado, pero ya está dado de baja. Salir
+            if (alumno.isEstado()==false) {
+                JOptionPane.showMessageDialog(this, "Este alumno ya está dado de baja.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         }
 
         // Eliminar alumnos y limpiar campos (excepto documento)
@@ -255,10 +263,10 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             apellidoTextField.setText("");
             nombreTextField.setText("");
             fechaNacimientoCalendar.setCalendar(null);
-            JOptionPane.showMessageDialog(this, "Alumno dado de baja", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Alumno dado de baja.", "Información", JOptionPane.INFORMATION_MESSAGE);
         } else {
             // Por alguna razon no se pudo eliminar
-            JOptionPane.showMessageDialog(this, "No se pudo dar de baja al alumno", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se pudo dar de baja al alumno.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_darBajaButtonActionPerformed
 
@@ -273,7 +281,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
 
         // Salir si algun input esta en blanco o nulo
         if (documentoStr.isBlank() || apellido.isBlank() || nombre.isBlank() || date == null) {
-            JOptionPane.showMessageDialog(this, "Todos los campos deben ser rellenados", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Todos los campos deben ser rellenados.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -282,7 +290,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         try {
             dni = Integer.parseInt(documentoTextField.getText());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El documento debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El documento debe ser un número entero sin decimales.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -291,15 +299,15 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
 
         // Buscar este alumno
         Alumno alumno = alumnoData.buscarAlumnoPorDni(dni);
+        
         // Guardar resultado posterior del SQL
-        Boolean result = false;
-
+        Boolean result;
         if (alumno == null) {
             // Alumno no encontrado, se crea uno nuevo
             alumno = new Alumno(dni, nombre, apellido, fechaNacimiento, estado);
             result = alumnoData.guardarAlumno(alumno);
         } else {
-            // Alumno encontrado, actualizar el campo
+            // Alumno encontrado, actualizar el registro
             alumno.setDni(dni);
             alumno.setNombre(nombre);
             alumno.setApellido(apellido);
@@ -308,11 +316,11 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             result = alumnoData.modificarAlumno(alumno);
         }
 
-        // Imprimir resultado SQL (creacion ó actualizacion)
+        // Imprimir resultado SQL (creacion o actualizacion)
         if (result) {
-            JOptionPane.showMessageDialog(this, "Alumno guardado", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Alumno guardado.", "Información", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "No se pudo guardar al alumno", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se pudo guardar al alumno.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_guardarButtonActionPerformed
 

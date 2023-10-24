@@ -85,7 +85,10 @@ public class MateriaData {
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(rs.getBoolean("estado"));
-                
+             
+                System.out.println("Se encontró la materia");
+            }else{
+                System.out.println("No se ha podido encontrar la materia");
             }
             ps.close();
         } catch (SQLException e) {
@@ -177,7 +180,7 @@ public class MateriaData {
     public boolean modificarMateria(Materia materia) {
         boolean result = true;
         try {
-            String sql = "UPDATE materia SET nombre=?, año=? WHERE idMateria=?";
+            String sql = "UPDATE materia SET nombre=?, año=?, estado=? WHERE idMateria=?";
 
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, materia.getNombre());

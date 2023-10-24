@@ -28,12 +28,11 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
         initComponents();
         this.alumnoData = alumnoData;
         this.inscripcionData = inscripcionData;
-        configurarComboBox();
         armarCabeceraTabla();
     }
 
     private void configurarComboBox() {
-        List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
+        List<Alumno> listaAlumnos = alumnoData.listarAlumnosSegunEstado(true);  // Se obtienen todos los alumnos que están activos
         jcbAlumSeleccion.removeAllItems();
         if (listaAlumnos.isEmpty()) {
             jcbAlumSeleccion.setSelectedIndex(-1);
@@ -374,6 +373,7 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
         configurarComboBox();
+        System.out.println("iFrame activado");
     }//GEN-LAST:event_formInternalFrameActivated
 
 
