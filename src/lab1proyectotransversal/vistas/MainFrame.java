@@ -36,7 +36,7 @@ public class MainFrame extends javax.swing.JFrame {
         Connection connection = Conexion.getInstance();
         this.alumnoData = new AlumnoData();
         this.materiaData = new MateriaData();
-        this.inscripcionData = new InscripcionData(alumnoData, materiaData);
+        this.inscripcionData = new InscripcionData(materiaData, alumnoData);
 
         // Alumnos
         gestionAlumno = new GestionAlumno(alumnoData);
@@ -55,7 +55,7 @@ public class MainFrame extends javax.swing.JFrame {
         jDesktopPane1.add(manipulacionNotas);
 
         // Consulta Alumnos por materia
-        consultaAlumnosPorMateria = new ConsultaAlumnosPorMateria(alumnoData, materiaData);
+        consultaAlumnosPorMateria = new ConsultaAlumnosPorMateria(materiaData, inscripcionData);
         jDesktopPane1.add(consultaAlumnosPorMateria);
 
     }
