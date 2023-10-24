@@ -204,7 +204,7 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
         try {
             dni = Integer.parseInt(documentoTextField.getText());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El documento debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El documento debe ser un número entero sin decimales.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -215,7 +215,8 @@ public class GestionAlumno extends javax.swing.JInternalFrame {
             apellidoTextField.setText("");
             nombreTextField.setText("");
             fechaNacimientoCalendar.setCalendar(null);
-            JOptionPane.showMessageDialog(this, "No se ha encontrado al alumno", "Información", JOptionPane.INFORMATION_MESSAGE);
+            
+            JOptionPane.showMessageDialog(this, "No se ha encontrado al alumno.", "Información", JOptionPane.INFORMATION_MESSAGE);
 
         } else {
             // Encontrado: actualizar campos

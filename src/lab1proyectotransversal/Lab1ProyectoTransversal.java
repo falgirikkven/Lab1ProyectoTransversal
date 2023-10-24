@@ -19,11 +19,10 @@ public class Lab1ProyectoTransversal {
         // Establecer la conexion
         Connection con = Conexion.getInstance();
         if (con == null) {
-            JOptionPane.showMessageDialog(null, "No se pudo conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No se pudo conectar a la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         MainFrame.ejecutar(args);
-
     }
 }

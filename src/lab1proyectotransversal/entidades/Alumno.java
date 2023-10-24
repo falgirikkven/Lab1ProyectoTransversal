@@ -19,7 +19,7 @@ public class Alumno {
     }
 
     public Alumno(int dni, String nombre, String apellido, LocalDate fechaNacimiento, boolean estado) {
-        this.idAlumno = -1;
+        this.idAlumno = -1;     // Luego se utilizara para denotar que el verdadero id debe ser establecido por el gestor de BD
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -84,11 +84,13 @@ public class Alumno {
         this.estado = estado;
     }
 
+    // Se va a utilizar en la muestra de datos en las vistas
     @Override
     public String toString() {
-        return dni + ", " + nombre + " " + apellido;
+        return dni + ", " + nombre + ", " + apellido;
     }
     
+    // Se va a utilizar para la muestra de datos por consola
     public String mostrarAlumno(){
         return "Alumno{" + "idAlumno=" + idAlumno + ", dni=" + dni + ", nombre=" + nombre + ", apellido=" + apellido + ", fechaNacimiento=" + fechaNacimiento + ", estado=" + estado + '}';
     }

@@ -37,10 +37,16 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     private void configurarComboBox() {
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
         jcbAlumSeleccion.removeAllItems();
-        for (Alumno alum : listaAlumnos) {
-            jcbAlumSeleccion.addItem(alum);
+        if (listaAlumnos.isEmpty()) {
+            jcbAlumSeleccion.setSelectedIndex(-1);
+            System.out.println("No hay alumnos cuyas notas establecer.");
+        } else {
+            for (Alumno alum : listaAlumnos) {
+                jcbAlumSeleccion.addItem(alum);
+            }
+            jcbAlumSeleccion.setSelectedIndex(0);
         }
-        jcbAlumSeleccion.setSelectedIndex(-1);
+
     }
 
     private void armarCabeceraTabla() {
@@ -54,6 +60,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         if (jcbAlumSeleccion.getSelectedIndex() == -1) {
             modelo.setRowCount(0);
         } else {
+            modelo.setRowCount(0);
             Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
             List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripcionesPorAlumno(alumno.getIdAlumno());
             for (Inscripcion insc : listaInscripciones) {

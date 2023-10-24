@@ -12,8 +12,8 @@ import lab1proyectotransversal.entidades.*;
  */
 public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
-    private final AlumnoData alumnoData;      
-    private final InscripcionData inscripcionData;  
+    private final AlumnoData alumnoData;
+    private final InscripcionData inscripcionData;
     private DefaultTableModel modelo = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int i, int i1) {
@@ -32,39 +32,42 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
         armarCabeceraTabla();
     }
 
-    private void configurarComboBox() {     
+    private void configurarComboBox() {
         List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
         jcbAlumSeleccion.removeAllItems();
-        for (Alumno alum : listaAlumnos) {            
-            jcbAlumSeleccion.addItem(alum);
+        if (listaAlumnos.isEmpty()) {
+            jcbAlumSeleccion.setSelectedIndex(-1);
+            System.out.println("No hay alumnos a los cuales inscribir o desinscribir en materias.");
+        } else {
+            for (Alumno alum : listaAlumnos) {
+                jcbAlumSeleccion.addItem(alum);
+            }
+            jcbAlumSeleccion.setSelectedIndex(0);
         }
     }
 
-    private void armarCabeceraTabla() {     
+    private void armarCabeceraTabla() {
         modelo.addColumn("ID");
         modelo.addColumn("Nombre");
         modelo.addColumn("Año");
         jtListadoMaterias.setModel(modelo);
     }
 
-    private void borrarFilasTabla() {       
-        int indFil = jtListadoMaterias.getRowCount() - 1;
-        for (; indFil >= 0; indFil--) {
-            modelo.removeRow(indFil);
-        }
-    }
-    
     private void configContTablaMatNoInscrip() {
-        borrarFilasTabla();
-        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();        
-        List<Materia> listaMatNoCursadas = inscripcionData.obtenerMateriasNOCursadas(alumno.getIdAlumno());        
+        modelo.setRowCount(0);
+        if (jcbAlumSeleccion.getSelectedIndex()==-1) {
+            
+        } else {
+        }
+        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+        List<Materia> listaMatNoCursadas = inscripcionData.obtenerMateriasNOCursadas(alumno.getIdAlumno());
         for (Materia mat : listaMatNoCursadas) {
             modelo.addRow(new Object[]{mat.getIdMateria(), mat.getNombre(), mat.getAnio()});
         }
     }
 
     private void configContTablaMatInscrip() {
-        borrarFilasTabla();
+        modelo.setRowCount(0);
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
         List<Materia> listaMaterias = inscripcionData.obtenerMateriasCursadas(alumno.getIdAlumno());
         for (Materia mat : listaMaterias) {
@@ -255,6 +258,7 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jrbMatNoInscripActionPerformed
 
     private void jcbAlumSeleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAlumSeleccionActionPerformed
+        System.out.println("ActionPermored de jcbAlumSelecciona en Manejo de inscripciones.");
         if (jrbMatInscrip.isSelected()) {
             configContTablaMatInscrip();
         }
@@ -272,10 +276,10 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jrbMatInscripActionPerformed
 
     private void jbInscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInscribirActionPerformed
-        
+
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
         // si no hay materias en jtListadoMaterias, advertir al usuario 
-        if (jtListadoMaterias.getRowCount() == 0) {            
+        if (jtListadoMaterias.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, """
                                                 No quedan más materias en las que inscribir al alumno con 
                                                 DNI: """ + alumno.getDni(), "Información", 1);
@@ -309,7 +313,7 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
                 } else {
                     JOptionPane.showMessageDialog(this, """
                                                         ERROR: No se ha podido inscribir al alumno 
-                                                        con DNI: """ + alumno.getDni() + " en " + materia.getNombre(), "Error", JOptionPane.ERROR_MESSAGE);                                        
+                                                        con DNI: """ + alumno.getDni() + " en " + materia.getNombre(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
 
@@ -321,10 +325,10 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbInscribirActionPerformed
 
     private void jbAnularInscripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAnularInscripActionPerformed
-        
+
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
         // si no hay materias en jtListadoMaterias, advertir al usuario
-        if (jtListadoMaterias.getRowCount() == 0) {            
+        if (jtListadoMaterias.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, """
                                                 No quedan más materias en las que desinscribir al alumno con 
                                                 DNI: """ + alumno.getDni(), "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -346,15 +350,15 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
                 // Ejecutando la operación y mostrando los resultados
                 if (inscripcionData.borrarInscripcionMateriaAlumno(alumno.getIdAlumno(), idMat)) {
                     modelo.removeRow(filaSelec);
-                    
+
                     JOptionPane.showMessageDialog(this, """
                                                         Se ha borrado la inscripción del alumno con 
-                                                        DNI: """ + alumno.getDni() + " en " + nombreMat, "Información", JOptionPane.INFORMATION_MESSAGE);                                                            
+                                                        DNI: """ + alumno.getDni() + " en " + nombreMat, "Información", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(this, """
                                                         ERROR: No se ha podido borrar la inscripción del alumno 
-                                                        con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);                                        
-                }                
+                                                        con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 break;
 
             default:
