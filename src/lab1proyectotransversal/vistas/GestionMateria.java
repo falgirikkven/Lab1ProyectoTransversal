@@ -1,13 +1,15 @@
 package lab1proyectotransversal.vistas;
 
+import javax.swing.JOptionPane;
 import lab1proyectotransversal.accesoADatos.MateriaData;
+import lab1proyectotransversal.entidades.Materia;
 
 /**
  *
  * @author Grupo-3
  */
 public class GestionMateria extends javax.swing.JInternalFrame {
-
+    
     MateriaData materiaData;
 
     /**
@@ -16,6 +18,12 @@ public class GestionMateria extends javax.swing.JInternalFrame {
     public GestionMateria(MateriaData materiaData) {
         initComponents();
         this.materiaData = materiaData;
+    }
+    
+    private void limpiarCampos() {
+        codigoTextField.setText("");
+        nombreTextField.setText("");
+        anioTextField.setText("");
     }
 
     /**
@@ -59,15 +67,47 @@ public class GestionMateria extends javax.swing.JInternalFrame {
 
         estadoLabel.setText("Estado:");
 
+        estadoRadioButton.setSelected(true);
+        estadoRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                estadoRadioButtonActionPerformed(evt);
+            }
+        });
+
         nuevoButton.setText("Nuevo");
+        nuevoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoButtonActionPerformed(evt);
+            }
+        });
 
         eliminarButton.setText("Eliminar");
+        eliminarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarButtonActionPerformed(evt);
+            }
+        });
 
         guardarButton.setText("Guardar");
+        guardarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarButtonActionPerformed(evt);
+            }
+        });
 
         salirButton.setText("Salir");
+        salirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirButtonActionPerformed(evt);
+            }
+        });
 
         buscarButton.setText("Buscar");
+        buscarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -100,7 +140,7 @@ public class GestionMateria extends javax.swing.JInternalFrame {
                         .addComponent(eliminarButton)
                         .addGap(18, 18, 18)
                         .addComponent(guardarButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                         .addComponent(salirButton)))
                 .addGap(24, 30, Short.MAX_VALUE))
         );
@@ -137,6 +177,117 @@ public class GestionMateria extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buscarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarButtonActionPerformed
+        // TODO add your handling code here:
+        int idMateria = 0;
+        
+        try {
+            idMateria = Integer.parseInt(codigoTextField.getText());
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El codigo debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        //buscar materia
+        Materia materia = materiaData.buscarMateria(idMateria);
+        if (materia == null) {
+            nombreTextField.setText("");
+            anioTextField.setText("");
+            JOptionPane.showMessageDialog(this, "No se ha encontrado la materia", "Información", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            nombreTextField.setText(materia.getNombre());
+            anioTextField.setText(materia.getAnio() + "");
+            estadoRadioButton.setSelected(materia.isEstado());
+        }
+    }//GEN-LAST:event_buscarButtonActionPerformed
+
+    private void nuevoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoButtonActionPerformed
+        limpiarCampos();
+    }//GEN-LAST:event_nuevoButtonActionPerformed
+
+    private void eliminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarButtonActionPerformed
+        int idMateria;
+        try {
+            idMateria = Integer.parseInt(codigoTextField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La materia debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Materia materia = materiaData.buscarMateria(idMateria);
+        if (materia != null) {
+            if (materiaData.eliminarMateria(materia.getIdMateria())) {
+                materia = null;
+                limpiarCampos();
+                JOptionPane.showMessageDialog(this, "materia eliminada", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar la materia", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay materia con este ID", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+    }//GEN-LAST:event_eliminarButtonActionPerformed
+
+    private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
+        
+        String codigo = codigoTextField.getText();
+        String nombre = nombreTextField.getText();
+        String aniolog = anioTextField.getText();
+        boolean estado = estadoRadioButton.isSelected();
+        System.out.println(estado);
+        
+        if (codigo.isBlank() || nombre.isBlank() || aniolog.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos deben ser rellenados", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        
+        
+
+        //validar el id materia
+        int idMateria;
+        int anio;
+        try {
+            idMateria = Integer.parseInt(codigoTextField.getText());
+            anio = Integer.parseInt(anioTextField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La materia debe ser un numero entero sin decimales", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        //buscar materia
+        Materia materia = materiaData.buscarMateria(idMateria);
+
+        //guardar sql
+        boolean result = false;
+        
+        if (materia == null) {
+            materia = new Materia(idMateria, nombre, anio, estado);
+            result = materiaData.guardarMateria(materia);
+        } else {
+            materia.setIdMateria(idMateria);
+            materia.setNombre(nombre);
+            materia.setAnio(anio);
+            materia.setEstado(estado);
+            result = materiaData.modificarMateria(materia);
+        }
+        //mostrar sql
+        if (result) {
+            JOptionPane.showMessageDialog(this, "Materia guardada", "Información", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No se puede guardar la materia", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_guardarButtonActionPerformed
+
+    private void salirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirButtonActionPerformed
+        this.hide();
+    }//GEN-LAST:event_salirButtonActionPerformed
+
+    private void estadoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estadoRadioButtonActionPerformed
+        estadoRadioButton.setSelected(isIcon);
+    }//GEN-LAST:event_estadoRadioButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
