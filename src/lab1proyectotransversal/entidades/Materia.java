@@ -22,7 +22,7 @@ public class Materia {
     }
 
     public Materia(String nombre, int anio, boolean estado) {
-        this.idMateria = -1;
+        this.idMateria = -1;    // Luego se utilizara para denotar que el verdadero id debe ser establecido por el gestor de BD
         this.nombre = nombre;
         this.anio = anio;
         this.estado = estado;
@@ -60,8 +60,14 @@ public class Materia {
         this.estado = estado;
     }
 
+    // Se va a utilizar en la muestra de datos en las vistas
     @Override
     public String toString() {
+        return nombre + ", " + anio;
+    }
+    
+    // Se va a utilizar para la muestra de datos por consola
+    public String mostrarMateria(){
         return "Materia{" + "idMateria=" + idMateria + ", nombre=" + nombre + ", año=" + anio + ", estado=" + estado + '}';
     }
 

@@ -24,18 +24,21 @@ public class Conexion {
     public static Connection getInstance() {
         if (connection == null) {
             try {
-                Class.forName(CLASSPATH);
+                // cargar driver
+                Class.forName(CLASSPATH);   
+                // crear conexión
                 connection = DriverManager.getConnection(URL + DB, USUARIO, PASSWORD);
 
-                System.out.println("Conexión exitosa");
-
-            } catch (ClassNotFoundException ex) {
+                System.out.println("Conexión exitosa");                
+            } catch (ClassNotFoundException ex) {                
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
         return connection;
+        
     }
 
 }
