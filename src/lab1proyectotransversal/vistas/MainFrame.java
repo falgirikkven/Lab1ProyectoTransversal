@@ -101,6 +101,7 @@ public class MainFrame extends javax.swing.JFrame {
         salir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Proyecto Transversal");
 
         jDesktopPane1.setPreferredSize(new java.awt.Dimension(640, 457));
 
