@@ -63,8 +63,8 @@ public class AlumnoData {
                 System.out.println("[Error " + errorCode + "] (Alumno repetido)");
             } else {
                 System.out.println("[Error " + errorCode + "]");
+                e.printStackTrace();
             }
-            e.printStackTrace();
 
         }
         return result;
@@ -149,7 +149,7 @@ public class AlumnoData {
         }
 
         return alumno;
-    }    
+    }
 
     public Alumno buscarAlumnoPorDni(int dni) {
         /*
@@ -238,7 +238,7 @@ public class AlumnoData {
         }
 
         return alumno;
-    }    
+    }
 
     public List<Alumno> listarAlumnos() {
         List<Alumno> alumnos = new ArrayList();
@@ -264,7 +264,7 @@ public class AlumnoData {
                 alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
                 alumno.setEstado(rs.getBoolean("estado"));
                 alumnos.add(alumno);
-            }                        
+            }
 
             // Cerrar el preparedStatement
             ps.close();
@@ -313,7 +313,7 @@ public class AlumnoData {
         }
 
         return alumnos;
-    }    
+    }
 
     public boolean modificarAlumno(Alumno alumno) {
         boolean result = true;
@@ -335,9 +335,9 @@ public class AlumnoData {
             int filas = ps.executeUpdate();
 
             // Comunicar resultado por consola
-            if (filas > 0) { 
+            if (filas > 0) {
                 System.out.println("Alumno modificado");
-            } else { 
+            } else {
                 result = false;
                 System.out.println("No se pudo modificar al alumno indicado");
             }
@@ -370,9 +370,9 @@ public class AlumnoData {
             int filas = ps.executeUpdate();
 
             // Comunicar resultado por consola
-            if (filas > 0) { 
+            if (filas > 0) {
                 System.out.println("Alumno dado de baja");
-            } else { 
+            } else {
                 result = false;
                 System.out.println("No se pudo dar de baja al alumno");
             }

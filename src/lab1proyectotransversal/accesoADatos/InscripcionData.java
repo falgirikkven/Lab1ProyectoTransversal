@@ -60,8 +60,8 @@ public class InscripcionData {
                 System.out.println("[Error " + errorCode + "] (Inscripcion repetido)");
             } else {
                 System.out.println("[Error " + errorCode + "]");
+                e.printStackTrace();
             }
-            e.printStackTrace();
         }
         return result;
     }
@@ -118,14 +118,14 @@ public class InscripcionData {
                 alumno.setNombre(rs.getString("alumno.nombre"));
                 alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
                 alumno.setEstado(rs.getBoolean("alumno.estado"));
-                
+
                 // Creando y asignando una instancia de Materia
                 materia = new Materia();
                 materia.setIdMateria(rs.getInt("idMateria"));
                 materia.setNombre(rs.getString("materia.nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(rs.getBoolean("materia.estado"));
-                
+
                 // Creando y asignando una instancia de Inscripcion
                 inscripcion = new Inscripcion();
                 inscripcion.setIdInscripto(rs.getInt("idInscripto"));
@@ -143,7 +143,7 @@ public class InscripcionData {
         }
         return listaIncripciones;
     }
-       
+
     public List<Inscripcion> obtenerInscripPorAlumSegunEstado(int idAlumno, boolean estadoAlum, boolean estadoMat) {
         List<Inscripcion> listaIncripciones = new ArrayList<>();
 
@@ -169,14 +169,14 @@ public class InscripcionData {
                 alumno.setNombre(rs.getString("alumno.nombre"));
                 alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
                 alumno.setEstado(estadoAlum);
-                
+
                 // Creando y asignando una instancia de Materia
                 materia = new Materia();
                 materia.setIdMateria(rs.getInt("idMateria"));
                 materia.setNombre(rs.getString("materia.nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(estadoMat);
-                
+
                 // Creando y asignando una instancia de Inscripcion
                 inscripcion = new Inscripcion();
                 inscripcion.setIdInscripto(rs.getInt("idInscripto"));
@@ -194,17 +194,17 @@ public class InscripcionData {
         }
         return listaIncripciones;
     }
-    
+
     public List<Materia> obtenerMateriasCursadas(int idAlumno) {
         List<Materia> listaMaterias = new ArrayList<>();
-        
+
         try {
             // Trayendo las materias en las cuales esté inscripto un alumno específico
             String sql = "SELECT * FROM materia WHERE idMateria IN (SELECT idMateria FROM inscripcion WHERE idAlumno=?) AND estado=true;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idAlumno);
             ResultSet rs = ps.executeQuery();
-            
+
             // Pasando las materias encontradas a listaMaterias
             Materia materia;
             while (rs.next()) {
@@ -228,14 +228,14 @@ public class InscripcionData {
 
     public List<Materia> obtenerMateriasNOCursadas(int idAlumno) {
         List<Materia> listaMaterias = new ArrayList<>();
-        
+
         try {
             // Trayendo las materias que no estén involucradas en una inscripción con un alumno específico
             String sql = "SELECT * FROM materia WHERE idMateria NOT IN (SELECT idMateria FROM inscripcion WHERE idAlumno=?) AND estado=true;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idAlumno);
             ResultSet rs = ps.executeQuery();
-            
+
             // Pasando las materias a listaMaterias
             Materia materia;
             while (rs.next()) {
@@ -259,21 +259,21 @@ public class InscripcionData {
 
     public boolean borrarInscripcionMateriaAlumno(int idAlumno, int idMateria) {
         boolean result = true;
-        
+
         try {
             // Borrando las inscripciones que involucren a un alumno específico y una materia específica
             String sql = "DELETE FROM inscripcion WHERE idAlumno=? AND idMateria=?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idAlumno);
             ps.setInt(2, idMateria);
-            
+
             // Corroborando si se llevó a cabo exitosamente la operación
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 System.out.println("Inscripción borrada.");
             } else {
                 result = false;
-                System.out.println("No se pudo borrar la inscripción.");                
+                System.out.println("No se pudo borrar la inscripción.");
             }
             ps.close();
         } catch (SQLException sqle) {
@@ -287,7 +287,7 @@ public class InscripcionData {
 
     public boolean actualizarNota(int idAlumno, int idMateria, int nota) {
         boolean result = true;
-        
+
         try {
             // Actualizando las notas de las inscripciones que involucran a un alumno y una materia específicos
             String sql = "UPDATE inscripcion SET nota=? WHERE idAlumno=? AND idMateria=?;";
@@ -295,14 +295,14 @@ public class InscripcionData {
             ps.setInt(1, nota);
             ps.setInt(2, idAlumno);
             ps.setInt(3, idMateria);
-            
+
             // Corroborando si la operación se llevó a cabo correctamente
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 System.out.println("Nota actualizada");
             } else {
                 result = false;
-                System.out.println("No se ha podido actualizar la nota");                
+                System.out.println("No se ha podido actualizar la nota");
             }
             ps.close();
         } catch (SQLException sqle) {
@@ -315,15 +315,15 @@ public class InscripcionData {
     }
 
     public List<Alumno> obtenerAlumnoXMateria(int idMateria) {
-        List<Alumno> listaAlumnos = new ArrayList<>();        
-        
+        List<Alumno> listaAlumnos = new ArrayList<>();
+
         try {
             // Trayendo los alumnos que se hayan inscripto en una materia específica
             String sql = "SELECT * FROM alumno WHERE idAlumno IN (SELECT idAlumno FROM inscripcion WHERE idMateria=?) AND estado=true;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
             ResultSet rs = ps.executeQuery();
-            
+
             // Pasando los alumnos a listaAlumnos
             Alumno alumno;
             while (rs.next()) {

@@ -42,7 +42,7 @@ public class MateriaData {
 
             // Ejecutar la sentencia SQL
             int filas = ps.executeUpdate();
-            
+
             // Comunicar resultado por consola
             if (filas > 0) {
                 System.out.println("Materia agregada");
@@ -59,16 +59,16 @@ public class MateriaData {
             int errorCode = e.getErrorCode();
             if (errorCode == 1062) {    // Materia repetida
                 System.out.println("[Error " + errorCode + "] (Materia repetida)");
-                                
+
             } else {
-                System.out.println("[Error " + errorCode + "]");                
+                System.out.println("[Error " + errorCode + "]");
+                e.printStackTrace();
             }
-            e.printStackTrace();
         }
 
         return result;
     }
-    
+
     public Materia buscarMateria(int idMateria) {
         Materia materia = null;
         try {
@@ -76,7 +76,7 @@ public class MateriaData {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
             ResultSet rs = ps.executeQuery();
-            
+
             /* Si se encontro la materia, crear nuevo objeto de tipo Materia con los datos obtenidos 
                y, en todo caso, comunicar el resultado por consola */
             if (rs.next()) {
@@ -85,9 +85,9 @@ public class MateriaData {
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(rs.getBoolean("estado"));
-             
+
                 System.out.println("Se encontró la materia");
-            }else{
+            } else {
                 System.out.println("No se ha podido encontrar la materia");
             }
             ps.close();
@@ -97,7 +97,7 @@ public class MateriaData {
         }
         return materia;
     }
-    
+
     public Materia buscarMateriaSegunEstado(int idMateria, boolean estado) {
         Materia materia = null;
         try {
@@ -106,7 +106,7 @@ public class MateriaData {
             ps.setInt(1, idMateria);
             ps.setBoolean(1, estado);
             ResultSet rs = ps.executeQuery();
-            
+
             /* Si se encontro la materia, crear nuevo objeto de tipo Materia con los datos obtenidos 
                y, en todo caso, comunicar el resultado por consola */
             if (rs.next()) {
@@ -115,9 +115,9 @@ public class MateriaData {
                 materia.setNombre(rs.getString("nombre"));
                 materia.setAnio(rs.getInt("año"));
                 materia.setEstado(estado);
-                                
+
                 System.out.println("Se encontró la materia");
-            }else{
+            } else {
                 System.out.println("No se encontró la materia");
             }
             ps.close();
@@ -127,10 +127,10 @@ public class MateriaData {
         }
         return materia;
     }
-    
+
     public List<Materia> listarMaterias() {
         List<Materia> listaMaterias = new ArrayList();
-        
+
         try {
             String sql = "SELECT * FROM materia;";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -151,10 +151,10 @@ public class MateriaData {
         }
         return listaMaterias;
     }
-    
+
     public List<Materia> listarMateriasSegunEstado(boolean estado) {
         List<Materia> listaMaterias = new ArrayList();
-        
+
         try {
             String sql = "SELECT * FROM materia WHERE estado=?;";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -176,7 +176,7 @@ public class MateriaData {
         }
         return listaMaterias;
     }
-    
+
     public boolean modificarMateria(Materia materia) {
         boolean result = true;
         try {
@@ -211,16 +211,16 @@ public class MateriaData {
 
         try {
             String sql = "UPDATE materia SET estado=false WHERE idMateria=?";
-            
+
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, idMateria);
-            
+
             int fil = ps.executeUpdate();
             if (fil > 0) {
                 System.out.println("Materia eliminada");
             } else {
                 result = false;
-                System.out.println("No se pudo dar de baja a la materia");                
+                System.out.println("No se pudo dar de baja a la materia");
             }
         } catch (SQLException e) {
             result = false;
