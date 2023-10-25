@@ -143,7 +143,58 @@ public class InscripcionData {
         }
         return listaIncripciones;
     }
+       
+    public List<Inscripcion> obtenerInscripPorAlumSegunEstado(int idAlumno, boolean estadoAlum, boolean estadoMat) {
+        List<Inscripcion> listaIncripciones = new ArrayList<>();
 
+        try {
+            // Trayendo las incripciones (junto con los alumnos y las materias involucrados en las mismas) 
+            String sql = "SELECT * FROM alumno JOIN inscripcion JOIN materia ON (materia.idMateria=inscripcion.idMateria AND alumno.idAlumno=inscripcion.idAlumno) WHERE alumno.idAlumno=? AND alumno.estado=? AND materia.estado=?;";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, idAlumno);
+            ps.setBoolean(2, estadoAlum);
+            ps.setBoolean(3, estadoMat);
+            ResultSet rs = ps.executeQuery();
+
+            // Creando Alumno, Materia e Incripcion para luego pasar Inscripcion a listaIncripciones
+            Alumno alumno;
+            Materia materia;
+            Inscripcion inscripcion;
+            while (rs.next()) {
+                // Creando y asignando una instancia de Alumno
+                alumno = new Alumno();
+                alumno.setIdAlumno(idAlumno);
+                alumno.setDni(rs.getInt("dni"));
+                alumno.setApellido(rs.getString("apellido"));
+                alumno.setNombre(rs.getString("alumno.nombre"));
+                alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
+                alumno.setEstado(estadoAlum);
+                
+                // Creando y asignando una instancia de Materia
+                materia = new Materia();
+                materia.setIdMateria(rs.getInt("idMateria"));
+                materia.setNombre(rs.getString("materia.nombre"));
+                materia.setAnio(rs.getInt("año"));
+                materia.setEstado(estadoMat);
+                
+                // Creando y asignando una instancia de Inscripcion
+                inscripcion = new Inscripcion();
+                inscripcion.setIdInscripto(rs.getInt("idInscripto"));
+                inscripcion.setNota(rs.getInt("nota"));
+                inscripcion.setAlumno(alumno);
+                inscripcion.setMateria(materia);
+
+                listaIncripciones.add(inscripcion);
+            }
+            ps.close();
+        } catch (SQLException sqle) {
+            // Informando sobre el error por consola
+            System.out.println("[Error " + sqle.getErrorCode() + "]");
+            sqle.printStackTrace();
+        }
+        return listaIncripciones;
+    }
+    
     public List<Materia> obtenerMateriasCursadas(int idAlumno) {
         List<Materia> listaMaterias = new ArrayList<>();
         

@@ -33,39 +33,73 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         armarCabeceraTabla();
     }
 
-    // Agregando items a jcbAlumSeleccion
-    private void configurarComboBox() {
-        List<Alumno> listaAlumnos = alumnoData.listarAlumnos();
-        jcbAlumSeleccion.removeAllItems();
-        if (listaAlumnos.isEmpty()) {
-            jcbAlumSeleccion.setSelectedIndex(-1);
-            System.out.println("No hay alumnos cuyas notas establecer.");
-        } else {
-            for (Alumno alum : listaAlumnos) {
-                jcbAlumSeleccion.addItem(alum);
-            }
-            jcbAlumSeleccion.setSelectedIndex(0);
-        }
-
-    }
-
     private void armarCabeceraTabla() {
         modelo.addColumn("Código");
         modelo.addColumn("Nombre");
         modelo.addColumn("Nota");
         jtMateriasCursadas.setModel(modelo);
     }
+    
+    private void configurarComboBox() {
 
-    private void configContTablaMatCurs() {
-        if (jcbAlumSeleccion.getSelectedIndex() == -1) {
-            modelo.setRowCount(0);
-        } else {
-            modelo.setRowCount(0);
-            Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-            List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripcionesPorAlumno(alumno.getIdAlumno());
-            for (Inscripcion insc : listaInscripciones) {
-                modelo.addRow(new Object[]{insc.getMateria().getIdMateria(), insc.getMateria().getNombre(), insc.getNota()});
+        // Eliminar todos los items de 'jcbAlumSeleccion'
+        jcbAlumSeleccion.removeAllItems();
+
+        // Obtener todos los alumnos 
+        List<Alumno> listaAlumnos = alumnoData.listarAlumnosSegunEstado(true);
+
+        if (listaAlumnos.isEmpty()) {   // Si no hay ningún alumno
+
+            // Advertir al usuario
+            JOptionPane.showMessageDialog(this, "No hay alumnos cuyas notas establecer.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            System.out.println("No hay alumnos cuyas notas establecer.");
+
+            jcbAlumSeleccion.setSelectedIndex(-1);      // Se requiere para provocar la ejecución de 'jcbAlumSeleccionActionPerformed()' cuando se ejecuta este método por primera vez luego de crear 'ManipulacionNotas'
+
+        } else {    // Si hay al menos un alumno           
+
+            // Se añaden los alumnos a 'jcbAlumSeleccion'
+            for (Alumno alum : listaAlumnos) {
+                jcbAlumSeleccion.addItem(alum);
             }
+        }
+    }
+
+    private void adminManipulacionNotas() {
+
+        // Borrar todas las filas de 'jtMateriasCursadas'
+        modelo.setRowCount(0);
+
+        if (jcbAlumSeleccion.getSelectedIndex() != -1) {    // Si hay al menos un alumno (y, por ende, 'jcbAlumSeleccion' no está vacío)
+
+            // Se obtiene el alumno seleccionado en 'jcbAlumSeleccion' y se obtienen las inscripciones que lo involucran
+            Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+            List<Inscripcion> listaInscripciones = inscripcionData.obtenerInscripPorAlumSegunEstado(alumno.getIdAlumno(), true, true);
+
+            if (listaInscripciones.isEmpty()) {     // Si 'alumno' no está involucrado en una inscripcion
+
+                // No se puede establecer la nota de una inscripción que no existe
+                jbCargarNota.setEnabled(false);
+
+                // Advertir al usuario
+                JOptionPane.showMessageDialog(this, """
+                                                    No hay inscripciones que correspondan al alumno con
+                                                    DNI: """ + alumno.getDni(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+            } else {    // Si 'alumno' está involucrado en una o más inscripciones
+
+                // Mostrar las incripciones en 'jtMateriasCursadas'
+                for (Inscripcion insc : listaInscripciones) {
+                    modelo.addRow(new Object[]{insc.getMateria().getIdMateria(), insc.getMateria().getNombre(), insc.getNota()});
+                }
+
+                // Se puede establecer la nota
+                jbCargarNota.setEnabled(true);
+            }
+        } else {    // Si no hay ningún alumno (y, por ende, 'jcbAlumSeleccion' está vacío)
+
+            // No se puede establecer la nota de una inscripción que involucra a un alumno que no existe
+            jbCargarNota.setEnabled(false);
         }
     }
 
@@ -140,6 +174,11 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
         });
 
         jbSalir.setText("Salir");
+        jbSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -191,19 +230,12 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jcbAlumSeleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAlumSeleccionActionPerformed
-        configContTablaMatCurs();
+        adminManipulacionNotas();
     }//GEN-LAST:event_jcbAlumSeleccionActionPerformed
 
     private void jbCargarNotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCargarNotaActionPerformed
 
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        // si no hay materias en jtMateriasCursadas, advertir al usuario 
-        if (jtMateriasCursadas.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, """
-                                                No hay inscripciones que correspondan al alumno con
-                                                DNI: """ + alumno.getDni(), "Información", 1);
-            return;
-        }
 
         switch (jtMateriasCursadas.getSelectedRowCount()) {
             case 0:
@@ -215,7 +247,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
             case 1:
                 int filaSelec = jtMateriasCursadas.getSelectedRow();
 
-                // obteniendo datos de inscripción
+                // Obteniendo datos de inscripción
                 int idMat = (int) jtMateriasCursadas.getValueAt(filaSelec, 0);
                 String nombreMat = (String) jtMateriasCursadas.getValueAt(filaSelec, 1);
                 int idAlum = alumno.getIdAlumno();
@@ -234,7 +266,7 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
 
                     // Ejecutando la actualización de nota e imprimiendo resultado
                     if (inscripcionData.actualizarNota(idAlum, idMat, nota)) {
-                        modelo.setValueAt(nota, filaSelec, 2);
+                        adminManipulacionNotas();       // Actualizar la tabla para verificar que la nota se actualizó
 
                         JOptionPane.showMessageDialog(this, """
                                                         Se ha cargado la nota del alumno con 
@@ -245,7 +277,9 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
                                                         con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException nfe) {
-                    JOptionPane.showMessageDialog(this, "Debe ingresar un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, """
+                                                        Debe ingresar un número válido (entero sin 
+                                                        decimales, mayor o igual que 1 y menor o igual que 10.""", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
 
@@ -259,6 +293,10 @@ public class ManipulacionNotas extends javax.swing.JInternalFrame {
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
         configurarComboBox();
     }//GEN-LAST:event_formInternalFrameActivated
+
+    private void jbSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalirActionPerformed
+        this.hide();
+    }//GEN-LAST:event_jbSalirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

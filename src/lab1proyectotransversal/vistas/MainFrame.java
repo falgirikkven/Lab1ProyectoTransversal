@@ -1,12 +1,10 @@
 package lab1proyectotransversal.vistas;
 
 import java.beans.PropertyVetoException;
-import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JInternalFrame;
 import lab1proyectotransversal.accesoADatos.AlumnoData;
-import lab1proyectotransversal.accesoADatos.Conexion;
 import lab1proyectotransversal.accesoADatos.InscripcionData;
 import lab1proyectotransversal.accesoADatos.MateriaData;
 
@@ -32,8 +30,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-
-        Connection connection = Conexion.getInstance();     // PARA QUÉ SE USA?
+        
         this.alumnoData = new AlumnoData();
         this.materiaData = new MateriaData();
         this.inscripcionData = new InscripcionData(materiaData, alumnoData);
@@ -47,7 +44,7 @@ public class MainFrame extends javax.swing.JFrame {
         jDesktopPane1.add(gestionMateria);
 
         // Inscripciones
-        manejoInscripcion = new ManejoInscripcion(alumnoData, inscripcionData);
+        manejoInscripcion = new ManejoInscripcion(alumnoData, materiaData, inscripcionData);
         jDesktopPane1.add(manejoInscripcion);
 
         // Notas
@@ -173,6 +170,11 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1.add(consultasMenu);
 
         salir.setText("Salir");
+        salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirActionPerformed(evt);
+            }
+        });
         jMenuBar1.add(salir);
 
         setJMenuBar(jMenuBar1);
@@ -211,6 +213,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         focusIFrame(consultaAlumnosPorMateria);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+        // TODO implementar
+    }//GEN-LAST:event_salirActionPerformed
 
     /**
      * @param args the command line arguments

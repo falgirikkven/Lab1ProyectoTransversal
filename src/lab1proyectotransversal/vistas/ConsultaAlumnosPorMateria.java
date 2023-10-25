@@ -1,6 +1,7 @@
 package lab1proyectotransversal.vistas;
 
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import lab1proyectotransversal.accesoADatos.InscripcionData;
 import lab1proyectotransversal.accesoADatos.MateriaData;
@@ -13,40 +14,82 @@ import lab1proyectotransversal.entidades.Materia;
  */
 public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
 
-    private final DefaultTableModel dtm;
+    private DefaultTableModel modelo = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int fil, int col) {
+            return false;
+        }
+    };
     private final MateriaData materiaData;
     private final InscripcionData inscripcionData;
-    private List<Materia> listaMaterias = null;
 
     /**
      * Creates new form ConsultaAlumnosMateria
      */
     public ConsultaAlumnosPorMateria(MateriaData materiaData, InscripcionData inscripcionData) {
         initComponents();
-        this.dtm = (DefaultTableModel) alumnosTable.getModel();
+        this.modelo = (DefaultTableModel) jtAlumPorMat.getModel();
         this.materiaData = materiaData;
         this.inscripcionData = inscripcionData;
+        armarCabeceraTabla();
     }
 
-    private void actualizarElementosComboBox() {
-        materiaSeleccionCB.removeAllItems();
-        listaMaterias = materiaData.listarMaterias();
-        for (Materia materia : listaMaterias) {
-            materiaSeleccionCB.addItem(materia.getNombre());
-        }
-        materiaSeleccionCB.setSelectedIndex(-1);
+    private void armarCabeceraTabla() {
+        modelo.addColumn("ID");
+        modelo.addColumn("DNI");
+        modelo.addColumn("Apellido");
+        modelo.addColumn("Nombre");
+        jtAlumPorMat.setModel(modelo);
     }
 
-    private void actualizarAlumnosTable() {
-        // Este metodo esta sujeto al tipo de lista (OJO)
-        Materia materiaSeleccionada = listaMaterias.get(materiaSeleccionCB.getSelectedIndex());
-        List<Alumno> listaAlumnos = inscripcionData.obtenerAlumnoXMateria(materiaSeleccionada.getIdMateria());
+    private void configComboBox() {
 
-        dtm.setRowCount(0);
-        for (Alumno alumno : listaAlumnos) {
-            dtm.addRow(new Object[]{alumno.getIdAlumno(), alumno.getDni(), alumno.getApellido(), alumno.getNombre()});
+        // Eliminar todos los items de 'jcbMatSeleccion'
+        jcbMatSeleccion.removeAllItems();
+
+        // Obtener todas las materias
+        List<Materia> listaMaterias = materiaData.listarMateriasSegunEstado(true);
+
+        if (listaMaterias.isEmpty()) {    // Si no hay materias 
+
+            // Advertir al usuario
+            JOptionPane.showMessageDialog(this, "No hay ninguna materia.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+            jcbMatSeleccion.setSelectedIndex(-1);     // Se requiere para provocar la ejecución de 'jcbMatSeleccionActionPerformed()' cuando se ejecuta este método por primera vez luego de crear 'ConsultaAlumnosPorMateria'
+
+        } else {    // Si hay al menos una materia
+
+            // Se cargan las materias en 'jcbMatSeleccion'
+            for (Materia materia : listaMaterias) {
+                jcbMatSeleccion.addItem(materia);
+            }
         }
-        System.out.println("actualizo tabla");
+    }
+
+    private void adminConsAlumPorMat() {
+
+        // Borrar las filas de 'jtAlumPorMat'
+        modelo.setRowCount(0);
+
+        if (jcbMatSeleccion.getSelectedIndex() != -1) {     // Existe al menos una materia (y, por ende, jcbMatSeleccion no está vacío)
+
+            // Obtener el item seleccionado en 'jcbMatSeleccion' y obtener los alumnos que están vinculados a la misma mediante inscripciones
+            Materia materia = (Materia) jcbMatSeleccion.getSelectedItem();
+            List<Alumno> listaAlumnos = inscripcionData.obtenerAlumnoXMateria(materia.getIdMateria());
+
+            if (listaAlumnos.isEmpty()) {   // Si ningún alumno está inscripto en la materia
+
+                // Advertir al usuario
+                JOptionPane.showMessageDialog(this, "No hay alumnos inscriptos en esta materia.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+            } else {    // Si al menos un alumno está incripto en la materia
+
+                // Mostrar los alumnos en 'jtAlumPorMat' 
+                for (Alumno alum : listaAlumnos) {
+                    modelo.addRow(new Object[]{alum.getIdAlumno(), alum.getDni(), alum.getApellido(), alum.getNombre()});
+                }
+            }
+        }        
     }
 
     /**
@@ -58,12 +101,12 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        titulo = new javax.swing.JLabel();
-        materiaSeleccionLabel = new javax.swing.JLabel();
-        materiaSeleccionCB = new javax.swing.JComboBox<>();
+        jlTitulo = new javax.swing.JLabel();
+        jlMatSeleccion = new javax.swing.JLabel();
+        jcbMatSeleccion = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        alumnosTable = new javax.swing.JTable();
-        salirButton = new javax.swing.JButton();
+        jtAlumPorMat = new javax.swing.JTable();
+        jbSalir = new javax.swing.JButton();
 
         setClosable(true);
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -74,37 +117,34 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
             }
         });
 
-        titulo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        titulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        titulo.setText("Listado de Alumnos por Materia");
+        jlTitulo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jlTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlTitulo.setText("Listado de Alumnos por Materia");
 
-        materiaSeleccionLabel.setText("Materia Seleccionada:");
+        jlMatSeleccion.setText("Materia Seleccionada:");
 
-        materiaSeleccionCB.addActionListener(new java.awt.event.ActionListener() {
+        jcbMatSeleccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                materiaSeleccionCBActionPerformed(evt);
+                jcbMatSeleccionActionPerformed(evt);
             }
         });
 
-        alumnosTable.setModel(new javax.swing.table.DefaultTableModel(
+        jtAlumPorMat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "DNI", "Apellido", "Nombre"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Long.class, java.lang.String.class, java.lang.String.class
-            };
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+            }
+        ));
+        jScrollPane1.setViewportView(jtAlumPorMat);
+
+        jbSalir.setText("Salir");
+        jbSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbSalirActionPerformed(evt);
             }
         });
-        jScrollPane1.setViewportView(alumnosTable);
-
-        salirButton.setText("Salir");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -114,32 +154,32 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(titulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jlTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addComponent(materiaSeleccionLabel)
+                        .addComponent(jlMatSeleccion)
                         .addGap(18, 18, 18)
-                        .addComponent(materiaSeleccionCB, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jcbMatSeleccion, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(salirButton)))
+                        .addComponent(jbSalir)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(titulo)
+                .addComponent(jlTitulo)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(materiaSeleccionLabel)
-                    .addComponent(materiaSeleccionCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jlMatSeleccion)
+                    .addComponent(jcbMatSeleccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(salirButton)
+                .addComponent(jbSalir)
                 .addGap(20, 20, 20))
         );
 
@@ -147,25 +187,24 @@ public class ConsultaAlumnosPorMateria extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        materiaSeleccionCB.setSelectedIndex(-1);
-        dtm.setRowCount(0);
+        configComboBox();
     }//GEN-LAST:event_formComponentShown
 
-    private void materiaSeleccionCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_materiaSeleccionCBActionPerformed
-        if (materiaSeleccionCB.getSelectedIndex() == -1) {
-            actualizarElementosComboBox();
-        } else {
-            actualizarAlumnosTable();
-        }
-    }//GEN-LAST:event_materiaSeleccionCBActionPerformed
+    private void jcbMatSeleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbMatSeleccionActionPerformed
+        adminConsAlumPorMat();
+    }//GEN-LAST:event_jcbMatSeleccionActionPerformed
+
+    private void jbSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalirActionPerformed
+        this.hide();
+    }//GEN-LAST:event_jbSalirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable alumnosTable;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox<String> materiaSeleccionCB;
-    private javax.swing.JLabel materiaSeleccionLabel;
-    private javax.swing.JButton salirButton;
-    private javax.swing.JLabel titulo;
+    private javax.swing.JButton jbSalir;
+    private javax.swing.JComboBox<Materia> jcbMatSeleccion;
+    private javax.swing.JLabel jlMatSeleccion;
+    private javax.swing.JLabel jlTitulo;
+    private javax.swing.JTable jtAlumPorMat;
     // End of variables declaration//GEN-END:variables
 }

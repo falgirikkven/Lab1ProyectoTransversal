@@ -13,6 +13,7 @@ import lab1proyectotransversal.entidades.*;
 public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
     private final AlumnoData alumnoData;
+    private final MateriaData materiaData;
     private final InscripcionData inscripcionData;
     private DefaultTableModel modelo = new DefaultTableModel() {
         @Override
@@ -24,24 +25,32 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     /**
      * Creates new form ManejoInscripciones
      */
-    public ManejoInscripcion(AlumnoData alumnoData, InscripcionData inscripcionData) {
+    public ManejoInscripcion(AlumnoData alumnoData, MateriaData materiaData, InscripcionData inscripcionData) {
         initComponents();
         this.alumnoData = alumnoData;
+        this.materiaData = materiaData;
         this.inscripcionData = inscripcionData;
         armarCabeceraTabla();
     }
 
     private void configurarComboBox() {
+        
         List<Alumno> listaAlumnos = alumnoData.listarAlumnosSegunEstado(true);  // Se obtienen todos los alumnos que están activos
-        jcbAlumSeleccion.removeAllItems();
-        if (listaAlumnos.isEmpty()) {
-            jcbAlumSeleccion.setSelectedIndex(-1);
-            System.out.println("No hay alumnos a los cuales inscribir o desinscribir en materias.");
-        } else {
+        jcbAlumSeleccion.removeAllItems();      // Se eliminan todos los items de 'jcbAlumSeleccion' (si realmente habían items que borrar, entonces este método genera provoca la ejecución de 'jcbAlumSeleccionActionPerformed()')
+
+        if (listaAlumnos.isEmpty()) {       // Si no hay ni un alumno activo...
+
+            JOptionPane.showMessageDialog(this, "No hay alumnos a los cuales inscribir o desinscribir en materias.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            System.out.println("No hay alumnos a los cuales inscribir o desinscribir en materias.");    // Para depurar
+            
+            jcbAlumSeleccion.setSelectedIndex(-1);  // Se necesita para provocar la ejecución de 'jcbAlumSeleccionActionPerformed()' cuando se ejecuta este método por primera vez luego de crear 'ManejoInscripcion'
+
+        } else {    // Si hay uno o más alumnos activos...
+
+            // Se añaden los alumnos a 'jcbAlumSeleccion'
             for (Alumno alum : listaAlumnos) {
                 jcbAlumSeleccion.addItem(alum);
             }
-            jcbAlumSeleccion.setSelectedIndex(0);
         }
     }
 
@@ -52,26 +61,79 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
         jtListadoMaterias.setModel(modelo);
     }
 
-    private void configContTablaMatNoInscrip() {
+    private void adminDesinscripcion() {
+
+        // Borrar las columnas de la tabla
         modelo.setRowCount(0);
-        if (jcbAlumSeleccion.getSelectedIndex()==-1) {
-            
-        } else {
+
+        if (jcbAlumSeleccion.getSelectedIndex() != -1) {    // Si hay al menos un alumno (y, por ende, 'jcbAlumSeleccion' no está vacío)
+
+            // Se obtiene el item selecionado en 'jcbAlumSeleccion' y las materias que cursa
+            Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+            List<Materia> listaMaterias = inscripcionData.obtenerMateriasCursadas(alumno.getIdAlumno());
+
+            if (listaMaterias.isEmpty()) {  // Si 'alumno' no cursa ninguna materia
+
+                // No se puede desinscribir a 'alumno' de una materia que curse
+                jbAnularInscrip.setEnabled(false);
+
+            } else {    // Si 'alumno' cursa una o más materias
+
+                // Se muestran las materias en 'jtListadoMaterias'
+                for (Materia mat : listaMaterias) {
+                    modelo.addRow(new Object[]{mat.getIdMateria(), mat.getNombre(), mat.getAnio()});
+                }
+
+                // Se puede desincribir a 'alumno' en una materia
+                jbAnularInscrip.setEnabled(true);
+            }
+        } else {    // Si no hay alumnos (y, por ende, 'jcbAlumSeleccion' está vacío)
+
+            // No se puede desincribir a un alumno que no existe de una materia
+            jbAnularInscrip.setEnabled(false);
         }
-        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        List<Materia> listaMatNoCursadas = inscripcionData.obtenerMateriasNOCursadas(alumno.getIdAlumno());
-        for (Materia mat : listaMatNoCursadas) {
-            modelo.addRow(new Object[]{mat.getIdMateria(), mat.getNombre(), mat.getAnio()});
-        }
+
+        // No se puede inscribir a un alumno en una materia en la que ya está inscripto
+        jbInscribir.setEnabled(false);
+
     }
 
-    private void configContTablaMatInscrip() {
+    private void adminInscripcion() {
+
+        // Borrar las columnas de la tabla
         modelo.setRowCount(0);
-        Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        List<Materia> listaMaterias = inscripcionData.obtenerMateriasCursadas(alumno.getIdAlumno());
-        for (Materia mat : listaMaterias) {
-            modelo.addRow(new Object[]{mat.getIdMateria(), mat.getNombre(), mat.getAnio()});
+
+        if (jcbAlumSeleccion.getSelectedIndex() != -1) {    // Si hay al menos un alumno (y, por ende, 'jcbAlumSeleccion' no está vacío)
+
+            // Se obtiene el item selecionado en 'jcbAlumSeleccion' y las materias que NO cursa
+            Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
+            List<Materia> listaMatNOCursadas = inscripcionData.obtenerMateriasNOCursadas(alumno.getIdAlumno());
+
+            if (listaMatNOCursadas.isEmpty()) {     // Si 'alumno' cursa todas las materias
+
+                // No se puede inscribir a 'alumno' en una materia que no curse
+                jbInscribir.setEnabled(false);
+
+            } else {    // Si existe una o más materias que 'alumno' no curse
+
+                // Se muestran las materias en 'jtListadoMaterias'
+                for (Materia mat : listaMatNOCursadas) {
+                    modelo.addRow(new Object[]{mat.getIdMateria(), mat.getNombre(), mat.getAnio()});
+                }
+
+                // Se puede inscribir a 'alumno' en una materia que no curse
+                jbInscribir.setEnabled(true);
+            }
+            
+        } else {    // Si no hay alumnos (y, por ende, 'jcbAlumSeleccion' está vacío)
+            
+            // No se puede inscribir a un alumno que no existe en una materia
+            jbInscribir.setEnabled(false);
         }
+        
+        // No se puede desinscribir a un alumno en una materia que no cursa
+        jbAnularInscrip.setEnabled(false);
+
     }
 
     /**
@@ -146,6 +208,7 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
         materiasGrupo.add(jrbMatNoInscrip);
         jrbMatNoInscrip.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jrbMatNoInscrip.setSelected(true);
         jrbMatNoInscrip.setText("Materias no insciptas");
         jrbMatNoInscrip.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -249,74 +312,84 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jrbMatNoInscripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbMatNoInscripActionPerformed
-        configContTablaMatNoInscrip();
 
-        // configurar botones
-        jbAnularInscrip.setEnabled(false);
-        jbInscribir.setEnabled(true);
+        // Manejar inscripciones
+        adminInscripcion();
     }//GEN-LAST:event_jrbMatNoInscripActionPerformed
 
     private void jcbAlumSeleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAlumSeleccionActionPerformed
-        System.out.println("ActionPermored de jcbAlumSelecciona en Manejo de inscripciones.");
+
+        /*
+        *   Cuando se actualiza 'jcbAlumSeleccion' y se eliminan todos los alumnos del mismo (si los hubiera) 
+        *   y se agregan los nuevos alumnos al mismo (si los hubiera) se activa este método, el cual determina qué se muestra en
+        *   la tabla y qué botones se habilitan, en función del jrb que esté seleccionado en ese momento      
+         */
         if (jrbMatInscrip.isSelected()) {
-            configContTablaMatInscrip();
-        }
-        if (jrbMatNoInscrip.isSelected()) {
-            configContTablaMatNoInscrip();
+            adminDesinscripcion();
+        } else {
+            adminInscripcion();
         }
     }//GEN-LAST:event_jcbAlumSeleccionActionPerformed
 
     private void jrbMatInscripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbMatInscripActionPerformed
-        configContTablaMatInscrip();
 
-        // configurar botones
-        jbInscribir.setEnabled(false);
-        jbAnularInscrip.setEnabled(true);
+        // Manejar desinscripciones
+        adminDesinscripcion();
     }//GEN-LAST:event_jrbMatInscripActionPerformed
 
     private void jbInscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInscribirActionPerformed
 
+        // Se obtiene el item selecionado en 'jcbAlumSeleccion'
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        // si no hay materias en jtListadoMaterias, advertir al usuario 
-        if (jtListadoMaterias.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, """
-                                                No quedan más materias en las que inscribir al alumno con 
-                                                DNI: """ + alumno.getDni(), "Información", 1);
-            return;
-        }
 
+        // Según la cantidad de filas seleccionadas en 'jtListadoMaterias'
         switch (jtListadoMaterias.getSelectedRowCount()) {
+
+            // Si no se seleccionó ninguna fila
             case 0:
+
+                // Avisar al usuario que debe seleccionar una fila
                 JOptionPane.showMessageDialog(this, """
                                                     Para inscribir al alumno en una materia primero debe 
                                                     seleccionar la misma en la lista, haciendole click.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 break;
 
+            // Si se seleccionó una única fila
             case 1:
-                int filaSelec = jtListadoMaterias.getSelectedRow();
 
-                // obteniendo datos de materia
+                // Se obtiene el índice de la fila seleccionada y se extraen los datos de la misma para crear 'materia'
+                int filaSelec = jtListadoMaterias.getSelectedRow();
                 int idMat = (int) jtListadoMaterias.getValueAt(filaSelec, 0);
                 String nombreMat = (String) jtListadoMaterias.getValueAt(filaSelec, 1);
                 int anio = (int) jtListadoMaterias.getValueAt(filaSelec, 2);
-
                 Materia materia = new Materia(idMat, nombreMat, anio, true);
+
+                // Se crea 'inscripcion' con 'alumno', 'materia' y 0 como nota
                 Inscripcion inscripcion = new Inscripcion(alumno, materia, 0);
 
-                // se ejecuta la operación y se muestran los resultados
-                if (inscripcionData.guardarInscripcion(inscripcion)) {
-                    modelo.removeRow(filaSelec);    // Se elimina de la tabla de materias en las que el alumno no se ha inscripto la fila de la materia en la que se acaba de inscribir                    
+                if (inscripcionData.guardarInscripcion(inscripcion)) {  // Si 'inscripcion' es guardado
+
+                    // Se actualiza el contenido de 'jtListadoMaterias' y los botones 'jbAnularInscrip' y 'jbInscribir'
+                    adminInscripcion();
+
+                    // Se comunica el resultado al usuario
                     JOptionPane.showMessageDialog(this, """
                                                         Se ha inscripto al alumno con 
                                                         DNI: """ + alumno.getDni() + " en " + materia.getNombre(), "Información", JOptionPane.INFORMATION_MESSAGE);
-                } else {
+
+                } else {    // Si no se pudo guardar 'inscripcion'
+
+                    // Se comunica el resultado al usuario
                     JOptionPane.showMessageDialog(this, """
                                                         ERROR: No se ha podido inscribir al alumno 
                                                         con DNI: """ + alumno.getDni() + " en " + materia.getNombre(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
 
+            // Si se seleccionó más de una fila
             default:
+
+                // Avisar al usuario de que debe seleccionar sólo una fila
                 JOptionPane.showMessageDialog(this, """
                                                     Debe seleccionar sólo una materia de la lista, haciendo click
                                                     en la misma.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -325,42 +398,52 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
 
     private void jbAnularInscripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAnularInscripActionPerformed
 
+        // Se obtiene el item selecionado en 'jcbAlumSeleccion'
         Alumno alumno = (Alumno) jcbAlumSeleccion.getSelectedItem();
-        // si no hay materias en jtListadoMaterias, advertir al usuario
-        if (jtListadoMaterias.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, """
-                                                No quedan más materias en las que desinscribir al alumno con 
-                                                DNI: """ + alumno.getDni(), "Información", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
 
+        // Según la cantidad de filas seleccionadas en 'jtListadoMaterias'
         switch (jtListadoMaterias.getSelectedRowCount()) {
+
+            // Si no se seleccionó ninguna fila
             case 0:
+
+                // Avisar al usuario que debe seleccionar una fila
                 JOptionPane.showMessageDialog(this, """
                                                     Para desinscribir al alumno en una materia primero debe 
                                                     seleccionar la misma en la lista, haciendole click.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 break;
 
+            // Si se seleccionó una única fila
             case 1:
+
+                // Se obtiene el índice de la fila seleccionada y se extraen algunos datos de la misma
                 int filaSelec = jtListadoMaterias.getSelectedRow();
-                // Obteniendo datos de la materia
                 String nombreMat = (String) jtListadoMaterias.getValueAt(filaSelec, 1);
                 int idMat = (int) jtListadoMaterias.getValueAt(filaSelec, 0);
-                // Ejecutando la operación y mostrando los resultados
-                if (inscripcionData.borrarInscripcionMateriaAlumno(alumno.getIdAlumno(), idMat)) {
-                    modelo.removeRow(filaSelec);
 
+                if (inscripcionData.borrarInscripcionMateriaAlumno(alumno.getIdAlumno(), idMat)) {      // Si se borró la inscripción
+
+                    // Se actualiza el contenido de 'jtListadoMaterias' y los botones 'jbAnularInscrip' y 'jbInscribir'
+                    adminDesinscripcion();
+
+                    // Se comunica el resultado al usuario
                     JOptionPane.showMessageDialog(this, """
                                                         Se ha borrado la inscripción del alumno con 
                                                         DNI: """ + alumno.getDni() + " en " + nombreMat, "Información", JOptionPane.INFORMATION_MESSAGE);
-                } else {
+
+                } else {    // Si no se pudo borrar la inscripción
+
+                    // Se comunica el resultado al usuario
                     JOptionPane.showMessageDialog(this, """
                                                         ERROR: No se ha podido borrar la inscripción del alumno 
                                                         con DNI: """ + alumno.getDni() + " en " + nombreMat, "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
 
+            // Si se seleccionó más de una fila
             default:
+
+                // Avisar al usuario de que debe seleccionar sólo una fila
                 JOptionPane.showMessageDialog(this, """
                                                     Debe seleccionar sólo una materia de la lista, haciendo click
                                                     en la misma.""", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -372,8 +455,22 @@ public class ManejoInscripcion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbSalirActionPerformed
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
+
+        /*
+        *   Cada vez que este JInternalFram se seleccione desde la barra de menú, este método se ejecuta        
+         */
+        // Actualizar el contenido de 'jcbAlumSeleccion' 
         configurarComboBox();
-        System.out.println("iFrame activado");
+
+        // Si, directamente, no hay ninguna materia (activa), entonces advertir al usuario
+        List<Materia> listaMaterias = materiaData.listarMateriasSegunEstado(true);
+        
+        if (listaMaterias.isEmpty()) {
+            
+            JOptionPane.showMessageDialog(this, "No hay materias en las cuales inscribir o desinscribir alumnos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            System.out.println("No hay materias en las cuales inscribir o desinscribir alumnos.");
+        }
+
     }//GEN-LAST:event_formInternalFrameActivated
 
 

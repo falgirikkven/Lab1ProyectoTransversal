@@ -69,11 +69,6 @@ public class GestionMateria extends javax.swing.JInternalFrame {
         estadoLabel.setText("Estado:");
 
         estadoRadioButton.setSelected(true);
-        estadoRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                estadoRadioButtonActionPerformed(evt);
-            }
-        });
 
         nuevoButton.setText("Nuevo");
         nuevoButton.addActionListener(new java.awt.event.ActionListener() {
@@ -302,10 +297,6 @@ public class GestionMateria extends javax.swing.JInternalFrame {
     private void salirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirButtonActionPerformed
         this.hide();
     }//GEN-LAST:event_salirButtonActionPerformed
-
-    private void estadoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estadoRadioButtonActionPerformed
-        estadoRadioButton.setSelected(isIcon);      // Para qué es esto?
-    }//GEN-LAST:event_estadoRadioButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
