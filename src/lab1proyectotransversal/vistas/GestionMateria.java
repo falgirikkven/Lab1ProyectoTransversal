@@ -9,7 +9,7 @@ import lab1proyectotransversal.entidades.Materia;
  * @author Grupo-3
  */
 public class GestionMateria extends javax.swing.JInternalFrame {
-    
+
     MateriaData materiaData;
 
     /**
@@ -18,12 +18,6 @@ public class GestionMateria extends javax.swing.JInternalFrame {
     public GestionMateria(MateriaData materiaData) {
         initComponents();
         this.materiaData = materiaData;
-    }
-    
-    private void limpiarCampos() {
-        codigoTextField.setText("");
-        nombreTextField.setText("");
-        anioTextField.setText("");
     }
 
     private void limpiarCampos() {
@@ -203,7 +197,7 @@ public class GestionMateria extends javax.swing.JInternalFrame {
             // Se encontró
             nombreTextField.setText(materia.getNombre());
             anioTextField.setText(materia.getAnio() + "");
-            estadoRadioButton.setSelected(materia.isEstado());            
+            estadoRadioButton.setSelected(materia.isEstado());
         }
     }//GEN-LAST:event_buscarButtonActionPerformed
 
@@ -261,18 +255,18 @@ public class GestionMateria extends javax.swing.JInternalFrame {
         //validar el id de la materia
         int idMateria, anioMat;
         try {
-            idMateria = Integer.parseInt(codigo);            
+            idMateria = Integer.parseInt(codigo);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El código debe ser un número entero sin decimales.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }        
+        }
         try {
             anioMat = Integer.parseInt(anio);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El año debe ser un número entero sin decimales.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         // Buscar materia
         Materia materia = materiaData.buscarMateria(idMateria);
 
@@ -291,7 +285,7 @@ public class GestionMateria extends javax.swing.JInternalFrame {
             materia.setEstado(estado);
             result = materiaData.modificarMateria(materia);
         }
-        
+
         // Imprimir resultado SQL (creación o actualización)
         if (result) {
             JOptionPane.showMessageDialog(this, "Materia guardada.", "Información", JOptionPane.INFORMATION_MESSAGE);
